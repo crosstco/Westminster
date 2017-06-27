@@ -49,7 +49,7 @@
         <h2>Programs</h2>
         <div class="program-list-container">
           {{#EasySearch.IfInputEmpty index=programIndex}}
-            {{#each program}}
+            {{#each programs}}
               {{> programItem}}
             {{/each}}
           {{else}}
