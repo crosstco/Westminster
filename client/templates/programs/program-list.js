@@ -28,7 +28,7 @@ Template.programList.helpers({
     //return Programs.find({
       //brainTargets: { $in: Session.get("query-filter") }
     //});
-    return Programs.find();
+    return Programs.find().fetch();
   },
   programIndex() {
     return ProgramIndex;
