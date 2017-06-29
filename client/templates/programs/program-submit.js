@@ -22,8 +22,8 @@ Template.programSubmit.events({
       tags: $("#program-submit-tags").val().replace(/\s+/g, "").split(","),
       tutorialLink: $("#program-submit-tutorial-link").val()
     };
-    
-    if(validateProgram(program)) {
+    var code = validateProgram(program);    
+    if(code === 0) {
       /*If the program's frontend validation is true, then move on to specific restriction validation*/
       if($("#program-submit-tutorial-link").val() != "") {
         var errorCount = backendValidateProgram(program);
@@ -34,6 +34,19 @@ Template.programSubmit.events({
         }
       }
     }
+    else if (code === -2) {
+       window.alert("Please fill out the program title");
+       return;
+    }
+    else if (code === -3) {
+       window.alert("Please fill out the program description");
+       return;
+    }
+    else if (code === -4) {
+       window.alert("Please fill out the program tags");
+       return;
+    }
+
     
     Meteor.call("insertProgram", program, function (error, result) {
       if (error)
@@ -112,11 +125,15 @@ Template.programSubmit.helpers({
 
 
 var validateProgram = function(program) {
-  if (program.title === "" || program.description === "" || program.tags === "") {
-    return false;
-  } else {
-    return true;
+  if (program.title === ""){
+    return -2;
+  } else if (program.description == "") {
+    return -3;	  
+  }else if (program.tags=== "") {
+    return -4;
   }
+  
+    return 0;
 }
 
 var tutLinkErrorFunc = function(program) {
