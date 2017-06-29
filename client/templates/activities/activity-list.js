@@ -25,10 +25,12 @@ Template.activityList.onCreated(function () {
 
 Template.activityList.helpers({
   activities: function () {
+
    // return Activities.find({
      // brainTargets: { $in: Session.get("query-filter") }
     //});
    return Activities.find().fetch();
+
   },
   activityIndex() {
     return ActivityIndex;
