@@ -18,7 +18,7 @@ Template.programDetails.helpers({
       _id: {
         $in: this.activityIds,
       },
-    }) ;
+    }) || [];
   }
 });
 

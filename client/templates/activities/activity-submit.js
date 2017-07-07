@@ -29,23 +29,14 @@ Template.activitySubmit.events({
       documents: currentFileObjs.get(),
       time: Number($('#time-slider').val()),
     };
-	var err = validateActivity(activity);
-    if(err == 0) {
+
+    if(validateActivity(activity)) {
       if ($("#activity-submit-tutorial-link").val() != "") {
         var errorCount = backendValidateActivity(activity);
         if (errorCount === 1) {
           return (tutLinkErrorFunc(activity));
         } 
       }
-    }else if (err === -2) {
-       window.alert("Please fill out the program title");
-       return;
-    }else if (err === -3) {
-       window.alert("Please fill out the program description");
-       return;
-    }else if (err === -4) {
-       window.alert("Please fill out the program tags");
-       return;
     }
 
     console.log(activity);
@@ -160,14 +151,10 @@ var uploadComplete = function (numberOfUploads, documentPaths) {
 }
 
 var validateActivity = function(activity) {
-      if (activity.title === "" ){
-		  return -2;
-	  }else if( activity.description === "" ){
-		  return -3;
-	  } else if (activity.tags === "") {
-        return -1;
+      if (activity.title === "" || activity.description === "" || activity.tags === "") {
+        return false;
       } else {
-        return 0;
+        return true;
       }
     }
 
