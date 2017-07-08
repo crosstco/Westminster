@@ -25,14 +25,20 @@ Template.programList.onCreated(function () {
 
 Template.programList.helpers({
   programs: function () {
-    //return Programs.find({
-      //brainTargets: { $in: Session.get("query-filter") }
-    //});
-    return Programs.find().fetch();
+    var tempList = Session.get("query-filter");
+    if (tempList.length == 0 || tempList == null) {
+       return Programs.find().fetch();
+    }
+    return Programs.find({
+      brainTargets: { $in: Session.get("query-filter") }
+    });
   },
-  programIndex() {
-    return ProgramIndex;
+  titleIndex() {
+    return TitleIndex;
   },
+  tagIndex(){
+    return TagIndex;
+  },	  
 });
 
 Template.programList.events({
