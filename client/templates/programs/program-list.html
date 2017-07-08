@@ -38,9 +38,12 @@
     <div class="filter-search-container container">
       <div class="program-search container margin-top">
         <div class="program-search-container-title float-left">
-          <h4>Search</h4>
+          <h4>Search by Title</h4>
+	  <br/>
+	  <h4>Search by Tags</h4>
         </div>
-          {{> EasySearch.Input index=programIndex}} 
+	   {{> EasySearch.Input index=titleIndex attributes=inputAtri}}
+	   {{> EasySearch.Input index=tagIndex attributes=inputAtri}}
       </div>  
     </div>
 
@@ -48,14 +51,26 @@
       <div class="program-list-wrapper">
         <h2>Programs</h2>
         <div class="program-list-container">
-          {{#EasySearch.IfInputEmpty index=programIndex}}
-            {{#each programs}}
-              {{> programItem}}
-            {{/each}}
+          {{#EasySearch.IfInputEmpty index=titleIndex}}
+             {{#EasySearch.IfInputEmpty index=tagIndex}}
+                  {{#each programs}}
+		  {{>programItem}}
+		  {{/each}}
+	     {{else}}
+	          {{#EasySearch.Each index=tagIndex}}
+		  {{>programItem}}
+		  {{/EasySearch.Each}}
+	     {{/EasySearch.IfInputEmpty}}
+	    
           {{else}}
-            {{#EasySearch.Each index=programIndex}}
-              {{> programItem}}
-            {{/EasySearch.Each}}
+	    {{#EasySearch.IfInputEmpty index=tagIndex}}
+	         {{#EasySearch.Each index=titleIndex}}
+	         {{>programItem}}
+                 {{/EasySearch.Each}}
+	    {{else}}
+	       {{#EasySearch.Each index=titleIndex}}
+	       {{/EasySearch.Each}}
+	    {{/EasySearch.IfInputEmpty}}
           {{/EasySearch.IfInputEmpty}}
         </div>
       </div>
