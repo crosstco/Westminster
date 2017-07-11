@@ -1,4 +1,6 @@
+/*
 Meteor.startup(function () {
+
   if (Activities.find().count() === 0) {
     const now = new Date().getTime();
     let interval = 0;
@@ -221,3 +223,4 @@ Meteor.startup(function () {
     console.log("Inserted Linked Program [" + tmpId + "]");
   }
 });
+*/
