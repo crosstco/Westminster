@@ -1,3 +1,6 @@
+/*
+This file has the logic of the activity submission page. It validates the inputs user gives, and submits the valid input to the DataBase.
+*/
 var currentFiles = new ReactiveVar();
 var currentFileObjs = new ReactiveVar();
 var fileNames;
@@ -29,14 +32,26 @@ Template.activitySubmit.events({
       documents: currentFileObjs.get(),
       time: Number($('#time-slider').val()),
     };
-
-    if(validateActivity(activity)) {
+	var err = validateActivity(activity);
+    if(err == 0) {
       if ($("#activity-submit-tutorial-link").val() != "") {
         var errorCount = backendValidateActivity(activity);
         if (errorCount === 1) {
           return (tutLinkErrorFunc(activity));
         } 
       }
+    }else if (err === -2) {
+       window.alert("Please fill out the program title");
+       return;
+    }else if (err === -1) {
+       window.alert("Please fill out the program tags");
+       return;
+    }else if (err === -3) {
+       window.alert("Please fill out the program description");
+       return;
+    }else if (err === -4) {
+       window.alert("Please Check at least one brain target");
+       return;
     }
 
     console.log(activity);
@@ -151,10 +166,15 @@ var uploadComplete = function (numberOfUploads, documentPaths) {
 }
 
 var validateActivity = function(activity) {
-      if (activity.title === "" || activity.description === "" || activity.tags === "") {
-        return false;
-      } else {
-        return true;
+      if (activity.title === "" ){
+		  return -2;
+	  } else if (activity.tags === "") {
+		  return -1;
+      }else if( activity.description === "" ){
+		  return -3;
+	  }  else
+	  {
+        return 0;
       }
     }
 
