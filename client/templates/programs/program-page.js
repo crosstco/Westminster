@@ -1,10 +1,10 @@
 const activityIds = new ReactiveVar();
-var selectedActivities = new ReactiveVar()
+var selectedActivities = new ReactiveVar();
 selectedActivities.set([]);
 Template.programPage.onRendered(() => {
   Tracker.autorun(() => {
     if (this.data) data.set(this.data);
-  });  
+  });
 });
 
 Template.programPage.helpers({
@@ -85,7 +85,7 @@ Template.programPage.events({
     "Long Term Memory": $("#Longterm-filter").is(':checked'),
     "Emotional Memory": $("#Emotional-filter").is(':checked'),
     };
-    
+
     var filterList = [];
     for (filter in filterObject) {
       if (filterObject[filter])
