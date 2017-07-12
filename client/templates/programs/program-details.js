@@ -31,6 +31,9 @@ Template.programDetails.events({
       if (error) return console.error(`Did not update favorites. Reason: ${error.reason}`);
       console.log(`Favorites: ${Meteor.user().profile.favoritePrograms}`);
     });
+  },
+  'click .print-icon': (e) => {
+    console.log('Printing Program!');
   }
 });
 
