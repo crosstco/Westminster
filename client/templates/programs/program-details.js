@@ -1,9 +1,14 @@
 const activityIds = new ReactiveVar();
+const id = new ReactiveVar();
+
 
 Template.programDetails.onRendered(() => {
   Tracker.autorun(() => {
     if (this.activityIds) activityIds.set(this.activityIds);
+
   });
+  
+  //initIcons();
 });
 
 Template.programDetails.helpers({
@@ -11,6 +16,7 @@ Template.programDetails.helpers({
     const user = Meteor.users.findOne({
       _id: this.userId,
     });
+	id.one=this._id;
     return user && user.profile;
   },
   activities() {
@@ -27,7 +33,7 @@ Template.programDetails.events({
     $('.favorite-icon').toggleClass('favorited');
 
     const favorited = $('.favorite-icon').hasClass('favorited');
-    Meteor.call('updateFavoriteProgram', data.get()._id, favorited, (error, result) => {
+    Meteor.call('updateFavoriteProgram', id.one, favorited, (error, result) => {
       if (error) return console.error(`Did not update favorites. Reason: ${error.reason}`);
       console.log(`Favorites: ${Meteor.user().profile.favoritePrograms}`);
     });
@@ -35,8 +41,8 @@ Template.programDetails.events({
 });
 
 function initIcons() {
-  if (Meteor.user() && data.get()) {
-    if (_.indexOf(Meteor.user().profile.favoritePrograms, data.get()._id) !== -1) {
+  if (Meteor.user() && this.get()) {
+    if (_.indexOf(Meteor.user().profile.favoritePrograms, this.get()._id) !== -1) {
       $('.favorite-icon').addClass('favorited');
     }
   }
