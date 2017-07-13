@@ -1,6 +1,6 @@
 var currentFiles = new ReactiveVar();
-var selectedActivities = new ReactiveVar()
-
+var selectedActivities = new ReactiveVar();
+var acts=[];
 Template.programSubmit.onRendered(function () {
   Session.set("program-docs", []);
   Session.set("current-doc-names", []);
@@ -16,9 +16,11 @@ Template.programSubmit.events({
     e.preventDefault();
 
     var program = {
+      _id: this._id,
+      brainTargets:filterList,
       title: $("#program-submit-title").val(),
       description: $("#program-submit-description").val(),
-      activityIds: selectedActivities.get(),
+      activityIds: acts,
       tags: $("#program-submit-tags").val().replace(/\s+/g, "").split(","),
       tutorialLink: $("#program-submit-tutorial-link").val()
     };
@@ -88,6 +90,7 @@ Template.programSubmit.events({
       selectedActivities.set(_.union(tmp, this._id));
     else
       selectedActivities.set(_.difference(tmp, this._id));
+    acts = selectedActivities.get();
   },
   "click .activity-select-submit-btn": function (e) {
     e.preventDefault();

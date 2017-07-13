@@ -1,6 +1,8 @@
-const activityIds = new ReactiveVar();
-var selectedActivities = new ReactiveVar()
-selectedActivities.set([]);
+if (!this.activityIds){
+   const activityIds = new ReactiveVar();
+   var selectedActivities = new ReactiveVar()
+   selectedActivities.set([]);
+}
 Template.programPage.onRendered(() => {
   Tracker.autorun(() => {
     if (this.data) data.set(this.data);
@@ -21,6 +23,7 @@ Template.programPage.helpers({
       },
     }) || [];
   },
+  //selectedActivities.set(orginalActivities().get());
     // Appropriately sets brain targets to checked/unchecked
   attentionChecked: function () {
     return this.brainTargets.indexOf("Attention") >= 0;
@@ -60,6 +63,9 @@ Template.programPage.helpers({
     return Activities.find();
   },
   selectedActivities: function () {
+//	  var result = [];
+//	  var temp;
+ //   var origAct = owner.originalActivities.get();
     if (selectedActivities.get()) {
       return Activities.find({
         _id: {
@@ -67,6 +73,9 @@ Template.programPage.helpers({
         }
       });
     }
+    //result.push(origAct);
+    //result.push(temp);
+    //return result;
   }
 })
 
@@ -146,4 +155,15 @@ Template.programPage.events({
   "click .deleteActivity": function (e) {
     selectedActivities.set([]);
   }
+});
+Template.programPage.helpers({
+   selectedActivities:function() {
+      if (selectedActivities.get()) {
+	return Activities.find({
+		_id: {
+		  $in:selectedActivities.get()
+		}
+	});
+      }
+   }
 });
