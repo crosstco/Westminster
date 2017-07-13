@@ -1,6 +1,7 @@
 var currentFiles = new ReactiveVar();
 var selectedActivities = new ReactiveVar();
-var acts=[];
+var acts = new ReactiveVar();
+var acts = [];
 Template.programSubmit.onRendered(function () {
   Session.set("program-docs", []);
   Session.set("current-doc-names", []);
@@ -17,7 +18,7 @@ Template.programSubmit.events({
 
     var program = {
       _id: this._id,
-      brainTargets:filterList,
+    
       title: $("#program-submit-title").val(),
       description: $("#program-submit-description").val(),
       activityIds: acts,
