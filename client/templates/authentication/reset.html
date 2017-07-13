@@ -1,21 +1,17 @@
-<template name="register">
-	<div class="page register-page">
+<template name="reset">
+	<div class="page reset-page">
 
-		<div class="register-wrapper">
-			<div class="register-container">
+		<div class="reset-wrapper">
+			<div class="reset-container">
 
 				<div class="margin-top animated fadeIn">
-					<h2 class="separate">Register Account</h2>
-					<form id="register-form">
-						<input id="register-full-name" type="text" class="auth-input" placeholder="Full Name">
-						<input id="register-community" type="text" class="auth-input" placeholder="Community">
-						<input id="register-email" type="email" class="auth-input" placeholder="Email">
-						<input id="register-password" type="password" class="auth-input" placeholder="Password">
+					<h2 class="separate">Reset Password</h2>
+					<form id="reset-form">
 
-						<button type="submit" class="btn auth-submit">Register</button>
-						<a href="{{ pathFor 'login' }}">
-							<button type="button" class="btn btn-default margin-bottom auth-alt">Already have an account? Login Here</button>
-						</a>
+						<input required id="reset-email" type="email" class="auth-input" placeholder="Email">
+
+						<button type="submit" class="btn auth-submit">Find Your Password</button>
+						
 					</form>
 				</div>
 
