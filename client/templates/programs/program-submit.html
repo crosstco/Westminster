@@ -1,3 +1,4 @@
+<!-- This file holds the structure and form of the program submission page. --> 
 <template name="programSubmit">
   <div class="page page-program-submit">
     <div class="container">
@@ -6,21 +7,21 @@
         <div class="col-sm-6">
         <div class="form-group">
           <label>Program Title</label>
-          <input class="form-control" id="program-submit-title"/>
+          <input required class="form-control" id="program-submit-title"/>
         </div>
         <div class="form-group">
           <label>Tags</label>
-          <input class="form-control" id="program-submit-tags"/>
+          <input required class="form-control" id="program-submit-tags"/>
         </div>
         <div class="form-group">
-          <label>Tutorial Link</label>
+          <label>Tutorial Link <small>(optional)</small></label>
           <input class="form-control" id="program-submit-tutorial-link"/>
           <div id="tutLinkError">
           </div>
         </div>
          <div class="form-group">
           <label>Description</label>
-          <textarea class="form-control" id="program-submit-description"></textarea>
+          <textarea required class="form-control" id="program-submit-description"></textarea>
         </div>
         <button type="submit" class="btn btn-default" >Submit</button>
         <div id="submitError" >
