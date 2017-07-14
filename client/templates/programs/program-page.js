@@ -1,7 +1,6 @@
 const activityIds = new ReactiveVar();
-var selectedActivities = new ReactiveVar();
+var selectedActivities = new ReactiveVar()
 selectedActivities.set([]);
-var theActs = [];
 Template.programPage.onRendered(() => {
   Tracker.autorun(() => {
     if (this.data) data.set(this.data);
@@ -61,10 +60,12 @@ Template.programPage.helpers({
     return Activities.find();
   },
   selectedActivities: function () {
-    if (this.activityIds) {
+    if (selectedActivities.get()) {
+      var all = selectedActivities.get().concat(this.activityIds);
       return Activities.find({
         _id: {
-          $in: this.activityIds
+          //$in: selectedActivities.get()
+	  $in:all
         }
       });
     }
@@ -74,9 +75,7 @@ Template.programPage.helpers({
 Template.programPage.events({
   "submit form": function (e) {
     e.preventDefault();
-    if (theActs.length == 0) {
-      theActs = this.activityIds;
-    }
+
     var filterObject = {
     "Attention": $("#Attention-filter").is(':checked'),
     "Language": $("#Language-filter").is(':checked'),
@@ -100,7 +99,7 @@ Template.programPage.events({
       title: $("#program-submit-title").val(),
       description: $("#program-submit-description").val(),
       brainTargets: filterList,
-      activityIds: theActs,
+      activityIds: selectedActivities.get(),
       tags: $("#program-submit-tags").val().replace(/\s+/g, "").split(","),
       tutorialLink: $("#program-submit-tutorial-link").val(),
       userId: this.userId
@@ -133,15 +132,14 @@ Template.programPage.events({
   },
   "click .activity-select-modal-item": function (e) {
     e.preventDefault();
+
     var tmp = selectedActivities.get();
-    selectedActivities.set(_.union(tmp,this._activityIds));
     $(e.target).toggleClass("selected");
 
     if ($(e.target).hasClass("selected"))
       selectedActivities.set(_.union(tmp, this._id));
     else
       selectedActivities.set(_.difference(tmp, this._id));
-    theActs= selectedActivities.get();
   },
   "click .activity-select-submit-btn": function (e) {
     e.preventDefault();
@@ -151,3 +149,4 @@ Template.programPage.events({
     selectedActivities.set([]);
   }
 });
+
