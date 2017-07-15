@@ -11,7 +11,7 @@ Template.reset.events({
 			if(userEmail == Meteor.users.findOne({"emails.0.address": userEmail}))
 			{
 				Accounts.emailTemplates.siteName = 'Westminster brain bootcamps';
-				Accounts.emailTemplates.from = 'userEmail';
+				Accounts.emailTemplates.from = // an official email account of westminster'';
 				Accounts.emailTemplates.enrollAccount.subject = (user) => {
                 return `Welcome to Westminster Brainboot Camps, ${user.profile.name}`;
                 };
