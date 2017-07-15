@@ -179,8 +179,9 @@ Template.programPage.events({
       else {
 	 window.alert(Activities.find(this._id).fetch()[0].title+" has been added");
       }
-   
+    }
   },
+        
   "click .activity-select-submit-btn": function (e) {
     e.preventDefault();
     Session.set("show-activity-select-modal", false);
