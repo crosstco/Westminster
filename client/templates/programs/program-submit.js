@@ -1,7 +1,6 @@
 var currentFiles = new ReactiveVar();
-var selectedActivities = new ReactiveVar();
-var acts = new ReactiveVar();
-var acts = [];
+var selectedActivities = new ReactiveVar()
+
 Template.programSubmit.onRendered(function () {
   Session.set("program-docs", []);
   Session.set("current-doc-names", []);
@@ -17,11 +16,9 @@ Template.programSubmit.events({
     e.preventDefault();
 
     var program = {
-      _id: this._id,
-    
       title: $("#program-submit-title").val(),
       description: $("#program-submit-description").val(),
-      activityIds: acts,
+      activityIds: selectedActivities.get(),
       tags: $("#program-submit-tags").val().replace(/\s+/g, "").split(","),
       tutorialLink: $("#program-submit-tutorial-link").val()
     };
@@ -62,13 +59,10 @@ Template.programSubmit.events({
 
     /*var file = $("#file").get(0).files[0];
     var fileObj = programDocs.insert(file);
-
     var sessionProgramDocs = Session.get("program-docs");
     var sessionDocNames = Session.get("current-doc-names");
-
     sessionProgramDocs.push(fileObj);
     sessionDocNames.push(fileObj.name());
-
     Session.set("program-docs", sessionProgramDocs);
     Session.set("current-doc-names", sessionDocNames);*/
   },
@@ -91,7 +85,13 @@ Template.programSubmit.events({
       selectedActivities.set(_.union(tmp, this._id));
     else
       selectedActivities.set(_.difference(tmp, this._id));
-    acts = selectedActivities.get();
+  },
+   "click .deleteActivity": function (e) {
+   var tmp = selectedActivities.get();
+   selectedActivities.set(_.difference(tmp,this._id));
+   
+   //var index = acts.indexOf(this._id);
+   //acts.splice(index,1);
   },
   "click .activity-select-submit-btn": function (e) {
     e.preventDefault();

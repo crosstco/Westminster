@@ -9,6 +9,7 @@
         </div>
         <div class="form-group">
           <label>Tags</label>
+	  <h5>please seperate tags with comma,no space in each tag</h5>
           <input class="form-control" id="program-submit-tags" value="{{tags}}"/>
         </div>
         <div class="form-group">
@@ -61,11 +62,13 @@
             <button class="btn btn-default add-activities-btn">Add Activities</button>
             or
             <button class="btn btn-default">Upload Activities</button>
-	    <!--<ul>
+	    <br/><label>Original Activities</label>
+	    <ul>
               {{#each originalActivities}}
-                <li><a href="{{pathFor 'activityDetails' _id=this._id}}" target="_parent">{{title}}</a></li>
+               <li>{{title}} <button type="button" id="del" class="btn btn-default btn-xs deleteOriActivity"><span class="glyphicon glyphicon-remove"></span></button></li>
               {{/each}}
-	    </ul>-->
+	    </ul>
+	    <label>New Activities</label> 
 	    <ul>
             {{#each selectedActivities}}
               <li>{{title}} <button type="button" id="del" class="btn btn-default btn-xs deleteActivity"><span class="glyphicon glyphicon-remove"></span></button></li>
@@ -105,4 +108,20 @@
 
     </div>
   </div>
+  <script type="text/javascript">
+$(document).ready(function(){
+
+//Check if the current URL contains '#' 
+if(document.URL.indexOf("#")==-1)
+{
+// Set the URL to whatever it was plus "#".
+url = document.URL+"#";
+location = "#";
+
+//Reload the page
+location.reload(true);
+
+}
+});
+</script> 
 </template>
