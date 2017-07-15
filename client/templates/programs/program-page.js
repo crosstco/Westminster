@@ -1,14 +1,18 @@
+//summer 2017 edit. The idea to deal with activity changes is to separate orignial activities and the new ones, since I don't how to 
+//get the program object. If someday someone somehow figured out a way to retreive program object, try to merge the orignial activities
+//with selecteActivies directly  
 const activityIds = new ReactiveVar();
+//selectedActivities is used to store newly selected Activities
 var selectedActivities = new ReactiveVar();
+//bin is used to store all the deleted activities. Seems like adundant, 
+//but it's crucial for initialising the acts, which holds the orignial
+//activities 
 var bin = new ReactiveVar();
 bin.set([]);
 selectedActivities.set([]);
 var acts = new ReactiveVar();
 acts.set([]);
-//window.location.reload(true);
-//acts.push(activityIds);
-//selectedActivities.set(acts);
-//console.log(this);
+
 
 Template.programPage.onRendered(() => {
   Tracker.autorun(() => {
@@ -26,6 +30,7 @@ Template.programPage.helpers({
     return user && user.profile;
   },
   originalActivities() {
+    //if acts hasn't initalised, which means there is nothing being deleted yet, initialise it
     if (acts.get().length == 0 && bin.get().length==0) {
          for (var i = 0;i < this.activityIds.length;i++) {	    
             var temp = acts.get();
@@ -33,8 +38,6 @@ Template.programPage.helpers({
 	 }
       
     }
-    console.log(this.activityIds);
-    console.log(acts.get());
     return this.activityIds && Activities.find({
       _id: {
         $in: acts.get(),
@@ -81,14 +84,12 @@ Template.programPage.helpers({
     return Activities.find();
   },
   selectedActivities: function () {
-     //acts = selectedActivities.get().concat(this.activityIds);
      if (selectedActivities.get()) {
       
      // selectedActivities.set(all);
       return Activities.find({
         _id: {
            $in: selectedActivities.get()
-	  //$in:acts
         }
       });
     }
@@ -96,6 +97,7 @@ Template.programPage.helpers({
 })
 
 Template.programPage.events({
+   //called when submit 
    "submit form": function (e) {
     e.preventDefault();
     var filterObject = {
@@ -173,9 +175,6 @@ Template.programPage.events({
   "click .deleteActivity": function (e) {
    var tmp = selectedActivities.get();
    selectedActivities.set(_.difference(tmp,this._id));
-   
-   //var index = acts.indexOf(this._id);
-   //acts.splice(index,1);
   },
   "click .deleteOriActivity":function(e) {
    var tmp = acts.get();
