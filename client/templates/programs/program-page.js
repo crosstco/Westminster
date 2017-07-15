@@ -168,10 +168,18 @@ Template.programPage.events({
 	selectedActivities.set(program.activityIds);
     }
     var tmp = selectedActivities.get();
+    var tem = acts.get();
     $(e.target).toggleClass("selected");
-
-    if ($(e.target).hasClass("selected"))
-      selectedActivities.set(_.union(tmp, this._id));
+    if ($(e.target).hasClass("selected")) {
+      var index1 = tmp.indexOf(this._id);
+      var index2 = tem.indexOf(this._id);
+      if (index1 < 0 && index2 < 0) {
+        selectedActivities.set(_.union(tmp, this._id));
+      }
+      else {
+	 window.alert(Activities.find(this._id).fetch()[0].title+" has been added");
+      }
+    }
     else
       selectedActivities.set(_.difference(tmp, this._id));
    
