@@ -6,7 +6,7 @@
    
     The idea to automatically update brain targets is that keep a ReactiveVar name bt to hold all the brain targets, when add activities,
     corrosponding brain targets would be added as well. When delete an activity, corrosponding brain targets would be deleted as well.
-    We do this by preserving the user's ability to customise the brain targets. 
+    We do this whilist preserving the user's ability to customise the brain targets. 
     
      
     Cheers 
@@ -118,7 +118,7 @@ Template.programPage.events({
    //called when submit 
    "submit form": function (e) {
     e.preventDefault();
-var filterObject = {
+   var filterObject = {
     "Attention": $("#Attention-filter").is(':checked'),
     "Language": $("#Language-filter").is(':checked'),
     "Visual-Spatial": $("#VisualSpatial-filter").is(':checked'),
@@ -171,8 +171,7 @@ var filterObject = {
   },
   
   "click .update-tags-btn":function(e) {
-	e.preventDefault();
-        //bt.set([]);	
+	e.preventDefault();	
         var tmp = selectedActivities.get();
     for(var i = 0; i < tmp.length;i++) {
 	var oneAct = Activities.find(tmp[i]).fetch()[0];
@@ -192,7 +191,7 @@ var filterObject = {
 		  bt.set(_.union(tem,brainList[j]));
 	      }
          }
-    console.log(bt.get());	 
+    //console.log(bt.get());	 
   },
   "click .activity-select-cancel-btn": function (e) {
     e.preventDefault();
