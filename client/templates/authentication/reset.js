@@ -4,7 +4,7 @@ Template.reset.events({
 		var userEmail = $("reset-email").val();
 		if (userEmail === "") {
 			// Tell user to enter.
-			window.alert("Please provide your email address");
+			window.alert("Please provide your email address");}
 		} else {
 			// Check if user email is registered.
 			// If Yes, then reset. Send the user an email to reset password
@@ -39,4 +39,4 @@ Template.reset.events({
 			// If No, then show alert saying email not in database.
 		}
 	}
-})
+}})
