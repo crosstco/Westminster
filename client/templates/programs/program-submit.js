@@ -1,3 +1,6 @@
+ /*
+This file has the logic of the program submission page. It validates the inputs user gives, and submits the valid input to the DataBase.
+*/
 var currentFiles = new ReactiveVar();
 var selectedActivities = new ReactiveVar()
 
@@ -46,6 +49,10 @@ Template.programSubmit.events({
        window.alert("Please fill out the program tags");
        return;
     }
+	else if (code === -1) {
+       window.alert("Please choose at least one activity");
+       return;
+    }
 
     
     Meteor.call("insertProgram", program, function (error, result) {
@@ -59,13 +66,10 @@ Template.programSubmit.events({
 
     /*var file = $("#file").get(0).files[0];
     var fileObj = programDocs.insert(file);
-
     var sessionProgramDocs = Session.get("program-docs");
     var sessionDocNames = Session.get("current-doc-names");
-
     sessionProgramDocs.push(fileObj);
     sessionDocNames.push(fileObj.name());
-
     Session.set("program-docs", sessionProgramDocs);
     Session.set("current-doc-names", sessionDocNames);*/
   },
@@ -88,6 +92,13 @@ Template.programSubmit.events({
       selectedActivities.set(_.union(tmp, this._id));
     else
       selectedActivities.set(_.difference(tmp, this._id));
+  },
+   "click .deleteActivity": function (e) {
+   var tmp = selectedActivities.get();
+   selectedActivities.set(_.difference(tmp,this._id));
+   
+   //var index = acts.indexOf(this._id);
+   //acts.splice(index,1);
   },
   "click .activity-select-submit-btn": function (e) {
     e.preventDefault();
@@ -131,6 +142,8 @@ var validateProgram = function(program) {
     return -3;	  
   }else if (program.tags=== "") {
     return -4;
+  } else if (program.activityIds.length<=0){
+	  return -1;
   }
   
     return 0;
