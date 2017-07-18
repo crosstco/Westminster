@@ -1,24 +1,48 @@
+//summer 2017 edit. The idea to deal with activity changes is to separate orignial activities and the new ones, since I don't how to 
+//get the program object. If someday someone somehow figured out a way to retreive program object, try to merge the orignial activities
+//with selecteActivies directly  
 const activityIds = new ReactiveVar();
-var selectedActivities = new ReactiveVar()
+//selectedActivities is used to store newly selected Activities
+var selectedActivities = new ReactiveVar();
+//bin is used to store all the deleted activities. Seems like adundant, 
+//but it's crucial for initialising the acts, which holds the orignial
+//activities 
+var bin = new ReactiveVar();
+bin.set([]);
 selectedActivities.set([]);
+var acts = new ReactiveVar();
+acts.set([]);
+
+
 Template.programPage.onRendered(() => {
   Tracker.autorun(() => {
-    if (this.data) data.set(this.data);
-  });  
+    if (this.data) data.set(this.data);    
+  });
+  
 });
 
 Template.programPage.helpers({
   owner() {
     const user = Meteor.users.findOne({
       _id: this.userId,
+      
     });
     return user && user.profile;
   },
   originalActivities() {
+    //if acts hasn't initalised, which means there is nothing being deleted yet, initialise it
+    if (acts.get().length == 0 && bin.get().length==0) {
+         for (var i = 0;i < this.activityIds.length;i++) {	    
+            var temp = acts.get();
+	    acts.set(_.union(temp,this.activityIds[i]));
+	 }
+      
+    }
     return this.activityIds && Activities.find({
       _id: {
-        $in: this.activityIds,
+        $in: acts.get(),
       },
+      
     }) || [];
   },
     // Appropriately sets brain targets to checked/unchecked
@@ -60,10 +84,12 @@ Template.programPage.helpers({
     return Activities.find();
   },
   selectedActivities: function () {
-    if (selectedActivities.get()) {
+     if (selectedActivities.get()) {
+      
+     // selectedActivities.set(all);
       return Activities.find({
         _id: {
-          $in: selectedActivities.get()
+           $in: selectedActivities.get()
         }
       });
     }
@@ -71,9 +97,9 @@ Template.programPage.helpers({
 })
 
 Template.programPage.events({
-  "submit form": function (e) {
+   //called when submit 
+   "submit form": function (e) {
     e.preventDefault();
-
     var filterObject = {
     "Attention": $("#Attention-filter").is(':checked'),
     "Language": $("#Language-filter").is(':checked'),
@@ -97,7 +123,7 @@ Template.programPage.events({
       title: $("#program-submit-title").val(),
       description: $("#program-submit-description").val(),
       brainTargets: filterList,
-      activityIds: selectedActivities.get(),
+      activityIds: acts.get().concat(selectedActivities.get()),
       tags: $("#program-submit-tags").val().replace(/\s+/g, "").split(","),
       tutorialLink: $("#program-submit-tutorial-link").val(),
       userId: this.userId
@@ -109,6 +135,7 @@ Template.programPage.events({
       if (error)
         return console.log("Could not update program.");
       Router.go("programDetails", { _id: result._id });
+      
     });
   },
   "click .delete-btn": function (e) {
@@ -130,7 +157,9 @@ Template.programPage.events({
   },
   "click .activity-select-modal-item": function (e) {
     e.preventDefault();
-
+    if (!selectedActivities.get()) {
+	selectedActivities.set(program.activityIds);
+    }
     var tmp = selectedActivities.get();
     $(e.target).toggleClass("selected");
 
@@ -144,6 +173,14 @@ Template.programPage.events({
     Session.set("show-activity-select-modal", false);
   },
   "click .deleteActivity": function (e) {
-    selectedActivities.set([]);
+   var tmp = selectedActivities.get();
+   selectedActivities.set(_.difference(tmp,this._id));
+  },
+  "click .deleteOriActivity":function(e) {
+   var tmp = acts.get();
+   var tmp2 = bin.get();
+   acts.set(_.difference(tmp,this._id));
+   bin.set(_.union(tmp2,this._id));
   }
 });
+

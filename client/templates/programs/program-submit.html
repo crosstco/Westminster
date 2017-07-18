@@ -12,6 +12,7 @@
         <div class="form-group">
           <label>Tags</label>
           <input required class="form-control" id="program-submit-tags"/>
+
         </div>
         <div class="form-group">
           <label>Tutorial Link <small>(optional)</small></label>
@@ -35,7 +36,7 @@
           or
           <button class="btn btn-default">Upload Activities</button>
           {{#each selectedActivities}}
-            {{title}}
+	  <br/> <li>{{title}} <button type="button" id="del" class="btn btn-default btn-xs deleteActivity"><span class="glyphicon glyphicon-remove"></span></button></li>
           {{/each}}
         </div>
           {{#if showActivities}}
@@ -52,7 +53,7 @@
                   {{#each activities}}
                     <!-- TODO: Activity list design -->
                     <div class="activity-select-modal-item">
-                      {{title}}
+			  {{title}}
                     </div>
                   {{/each}}
                 </div>
