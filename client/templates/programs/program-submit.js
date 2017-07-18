@@ -1,3 +1,6 @@
+ /*
+This file has the logic of the program submission page. It validates the inputs user gives, and submits the valid input to the DataBase.
+*/
 var currentFiles = new ReactiveVar();
 var selectedActivities = new ReactiveVar()
 
@@ -44,6 +47,10 @@ Template.programSubmit.events({
     }
     else if (code === -4) {
        window.alert("Please fill out the program tags");
+       return;
+    }
+	else if (code === -1) {
+       window.alert("Please choose at least one activity");
        return;
     }
 
@@ -135,6 +142,8 @@ var validateProgram = function(program) {
     return -3;	  
   }else if (program.tags=== "") {
     return -4;
+  } else if (program.activityIds.length<=0){
+	  return -1;
   }
   
     return 0;

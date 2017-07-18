@@ -219,7 +219,9 @@ Template.programPage.events({
     else
       selectedActivities.set(_.difference(tmp, this._id));
    
+
   },
+        
   "click .activity-select-submit-btn": function (e) {
     e.preventDefault();
      $('.update-tags-btn').click();
