@@ -5,25 +5,25 @@ Template.reset.events({
 		if (userEmail === "") {
 			// Tell user to enter.
 			window.alert("Please provide your email address");}
-		} else {
+		    else {
 			// Check if user email is registered.
 			// If Yes, then reset. Send the user an email to reset password
 			if(userEmail == Meteor.users.findOne({"emails.0.address": userEmail}))
 			{
 				Accounts.emailTemplates.siteName = 'Westminster brain bootcamps';
-				Accounts.emailTemplates.from = // an official email account of westminster'';
+				Accounts.emailTemplates.from = '<brainbootcamps@gmail.com>';
 				Accounts.emailTemplates.enrollAccount.subject = (user) => {
                 return `Welcome to Westminster Brainboot Camps, ${user.profile.name}`;
                 };
                 Accounts.emailTemplates.enrollAccount.text = (user, url) => {
                 return 'Forgot your password? Let us help you to find it!'
                 + ' To activate your account, simply click the link below:\n\n'
-                + // unique link;
+                + url
        
                 Accounts.emailTemplates.resetPassword.from = () => {
                 // Overrides the value set in `Accounts.emailTemplates.from` when resetting
                 // passwords.
-                return 'AwesomeSite Password Reset <accounts@westminster.com>';
+                return 'Westminster Password Reset <accounts@westminster.com>';
                 };
                 Accounts.emailTemplates.verifyEmail = {
                 subject() {
