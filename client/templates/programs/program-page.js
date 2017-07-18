@@ -1,6 +1,8 @@
-//summer 2017 edit. The idea to deal with activity changes is to separate orignial activities and the new ones, since I don't how to 
-//get the program object. If someday someone somehow figured out a way to retreive program object, try to merge the orignial activities
-//with selecteActivies directly  
+/**************************************************************************************************************************************
+    summer 2017 edit. The idea to deal with activity changes is to separate orignial activities and the new ones, since I don't how to 
+    get the program object. If someday someone somehow figured out a way to retreive program object, try to merge the orignial activities
+     with selecteActivies directly because that might be simpler. Cheers 
+***************************************************************************************************************************************/
 const activityIds = new ReactiveVar();
 //selectedActivities is used to store newly selected Activities
 var selectedActivities = new ReactiveVar();
@@ -13,7 +15,8 @@ selectedActivities.set([]);
 var acts = new ReactiveVar();
 acts.set([]);
 
-
+var bt = new ReactiveVar();
+bt.set([]);
 Template.programPage.onRendered(() => {
   Tracker.autorun(() => {
     if (this.data) data.set(this.data);    
@@ -37,7 +40,9 @@ Template.programPage.helpers({
 	    acts.set(_.union(temp,this.activityIds[i]));
 	 }
       
+    
     }
+  
     return this.activityIds && Activities.find({
       _id: {
         $in: acts.get(),
@@ -100,29 +105,31 @@ Template.programPage.events({
    //called when submit 
    "submit form": function (e) {
     e.preventDefault();
-    var filterObject = {
-    "Attention": $("#Attention-filter").is(':checked'),
-    "Language": $("#Language-filter").is(':checked'),
-    "Visual-Spatial": $("#VisualSpatial-filter").is(':checked'),
-    "Sensory": $("#Sensory-filter").is(':checked'),
-    "Planning/Judgement": $("#Planning-filter").is(':checked'),
-    "Computation": $("#Computation-filter").is(':checked'),
-    "Working Memory": $("#Working-filter").is(':checked'),
-    "Long Term Memory": $("#Longterm-filter").is(':checked'),
-    "Emotional Memory": $("#Emotional-filter").is(':checked'),
-    };
-    
-    var filterList = [];
-    for (filter in filterObject) {
-      if (filterObject[filter])
-        filterList.push(filter);
+    var tmp = selectedActivities.get();
+    for(var i = 0; i < tmp.length;i++) {
+	var oneAct = Activities.find(tmp[i]).fetch()[0];
+	var brainList = oneAct.brainTargets;
+	console.log(oneAct);
+        for (var j = 0;j < brainList.length;j++) {
+		var tem = bt.get();
+		bt.set(_.union(tem,brainList[j]));
+	}
     }
-
+    var tmp = acts.get();
+         for(var i = 0; i < tmp.length;i++) {
+	     var oneAct = Activities.find(tmp[i]).fetch()[0];
+	     var brainList = oneAct.brainTargets;
+	     //console.log(oneAct);
+              for (var j = 0;j < brainList.length;j++) {
+		  var tem = bt.get();
+		  bt.set(_.union(tem,brainList[j]));
+	      }
+         }
     var program = {
       _id: this._id,
       title: $("#program-submit-title").val(),
       description: $("#program-submit-description").val(),
-      brainTargets: filterList,
+      brainTargets: bt.get(),
       activityIds: acts.get().concat(selectedActivities.get()),
       tags: $("#program-submit-tags").val().replace(/\s+/g, "").split(","),
       tutorialLink: $("#program-submit-tutorial-link").val(),
@@ -161,13 +168,20 @@ Template.programPage.events({
 	selectedActivities.set(program.activityIds);
     }
     var tmp = selectedActivities.get();
+    var tem = acts.get();
     $(e.target).toggleClass("selected");
-
-    if ($(e.target).hasClass("selected"))
-      selectedActivities.set(_.union(tmp, this._id));
-    else
-      selectedActivities.set(_.difference(tmp, this._id));
+    if ($(e.target).hasClass("selected")) {
+      var index1 = tmp.indexOf(this._id);
+      var index2 = tem.indexOf(this._id);
+      if (index1 < 0 && index2 < 0) {
+        selectedActivities.set(_.union(tmp, this._id));
+      }
+      else {
+	 window.alert(Activities.find(this._id).fetch()[0].title+" has been added");
+      }
+    }
   },
+        
   "click .activity-select-submit-btn": function (e) {
     e.preventDefault();
     Session.set("show-activity-select-modal", false);
