@@ -1,7 +1,15 @@
 /**************************************************************************************************************************************
-    summer 2017 edit. The idea to deal with activity changes is to separate orignial activities and the new ones, since I don't how to 
+    summer 2017 edit. 
+    The idea to deal with activity changes is to separate orignial activities and the new ones, since I don't how to 
     get the program object. If someday someone somehow figured out a way to retreive program object, try to merge the orignial activities
-     with selecteActivies directly because that might be simpler. Cheers 
+    with selecteActivies directly because that might be simpler. 
+   
+    The idea to automatically update brain targets is that keep a ReactiveVar name bt to hold all the brain targets, when add activities,
+    corrosponding brain targets would be added as well. When delete an activity, corrosponding brain targets would be deleted as well.
+    We do this whilist preserving the user's ability to customise the brain targets. 
+    
+     
+    Cheers 
 ***************************************************************************************************************************************/
 const activityIds = new ReactiveVar();
 //selectedActivities is used to store newly selected Activities
@@ -39,9 +47,13 @@ Template.programPage.helpers({
             var temp = acts.get();
 	    acts.set(_.union(temp,this.activityIds[i]));
 	 }
-      
-    
+         for (var j = 0;j < this.brainTargets.length;j++) {
+		  var tem = bt.get();
+		  bt.set(_.union(tem,this.brainTargets[j]));
+	 }
+         
     }
+    //console.log(bt.get()); 
   
     return this.activityIds && Activities.find({
       _id: {
@@ -52,31 +64,32 @@ Template.programPage.helpers({
   },
     // Appropriately sets brain targets to checked/unchecked
   attentionChecked: function () {
-    return this.brainTargets.indexOf("Attention") >= 0;
+    return bt.get().indexOf("Attention") >= 0;
   },
   languageChecked: function () {
-    return this.brainTargets.indexOf("Language") >= 0;
+    return bt.get().indexOf("Language") >= 0;
   },
   visualspatialChecked: function () {
-    return this.brainTargets.indexOf("Visual-Spatial") >= 0;
+    return bt.get().indexOf("Visual-Spatial") >= 0;
   },
   sensoryChecked: function () {
-    return this.brainTargets.indexOf("Sensory") >= 0;
+    return bt.get().indexOf("Sensory") >= 0;
   },
   planningChecked: function () {
-    return this.brainTargets.indexOf("Planning/Judgement") >= 0;
+    return bt.get().indexOf("Planning/Judgement") >= 0;
   },
   computationChecked: function () {
-    return this.brainTargets.indexOf("Computation") >= 0;
+	  console.log(bt.get());
+    return bt.get().indexOf("Computation") >= 0;
   },
   workingChecked: function () {
-    return this.brainTargets.indexOf("Working Memory") >= 0;
+    return bt.get().indexOf("Working Memory") >= 0;
   },
   longtermChecked: function () {
-    return this.brainTargets.indexOf("Long Term Memory") >= 0;
+    return bt.get().indexOf("Long Term Memory") >= 0;
   },
   emotionalChecked: function () {
-    return this.brainTargets.indexOf("Emotional Memory") >= 0;
+    return bt.get().indexOf("Emotional Memory") >= 0;
   },
     /* Acitivity Select Modal */
   showActivities: function () {
@@ -105,31 +118,29 @@ Template.programPage.events({
    //called when submit 
    "submit form": function (e) {
     e.preventDefault();
-    var tmp = selectedActivities.get();
-    for(var i = 0; i < tmp.length;i++) {
-	var oneAct = Activities.find(tmp[i]).fetch()[0];
-	var brainList = oneAct.brainTargets;
-	console.log(oneAct);
-        for (var j = 0;j < brainList.length;j++) {
-		var tem = bt.get();
-		bt.set(_.union(tem,brainList[j]));
-	}
+   var filterObject = {
+    "Attention": $("#Attention-filter").is(':checked'),
+    "Language": $("#Language-filter").is(':checked'),
+    "Visual-Spatial": $("#VisualSpatial-filter").is(':checked'),
+    "Sensory": $("#Sensory-filter").is(':checked'),
+    "Planning/Judgement": $("#Planning-filter").is(':checked'),
+    "Computation": $("#Computation-filter").is(':checked'),
+    "Working Memory": $("#Working-filter").is(':checked'),
+    "Long Term Memory": $("#Longterm-filter").is(':checked'),
+    "Emotional Memory": $("#Emotional-filter").is(':checked'),
+    };
+    
+    var filterList = [];
+    for (filter in filterObject) {
+      if (filterObject[filter])
+        filterList.push(filter);
     }
-    var tmp = acts.get();
-         for(var i = 0; i < tmp.length;i++) {
-	     var oneAct = Activities.find(tmp[i]).fetch()[0];
-	     var brainList = oneAct.brainTargets;
-	     //console.log(oneAct);
-              for (var j = 0;j < brainList.length;j++) {
-		  var tem = bt.get();
-		  bt.set(_.union(tem,brainList[j]));
-	      }
-         }
+   
     var program = {
       _id: this._id,
       title: $("#program-submit-title").val(),
       description: $("#program-submit-description").val(),
-      brainTargets: bt.get(),
+      brainTargets: filterList,
       activityIds: acts.get().concat(selectedActivities.get()),
       tags: $("#program-submit-tags").val().replace(/\s+/g, "").split(","),
       tutorialLink: $("#program-submit-tutorial-link").val(),
@@ -158,8 +169,33 @@ Template.programPage.events({
     e.preventDefault();
     Session.set("show-activity-select-modal", true);
   },
+  
+  "click .update-tags-btn":function(e) {
+	e.preventDefault();	
+        var tmp = selectedActivities.get();
+    for(var i = 0; i < tmp.length;i++) {
+	var oneAct = Activities.find(tmp[i]).fetch()[0];
+	var brainList = oneAct.brainTargets;
+        for (var j = 0;j < brainList.length;j++) {
+		var tem = bt.get();
+		bt.set(_.union(tem,brainList[j]));
+	}
+    }
+    var tmp = acts.get();
+         for(var i = 0; i < tmp.length;i++) {
+	     var oneAct = Activities.find(tmp[i]).fetch()[0];
+	     var brainList = oneAct.brainTargets;
+	     //console.log(oneAct);
+              for (var j = 0;j < brainList.length;j++) {
+		  var tem = bt.get();
+		  bt.set(_.union(tem,brainList[j]));
+	      }
+         }
+    //console.log(bt.get());	 
+  },
   "click .activity-select-cancel-btn": function (e) {
     e.preventDefault();
+     $('.update-tags-btn').click();
     Session.set("show-activity-select-modal", false);
   },
   "click .activity-select-modal-item": function (e) {
@@ -180,21 +216,40 @@ Template.programPage.events({
 	 window.alert(Activities.find(this._id).fetch()[0].title+" has been added");
       }
     }
+    else
+      selectedActivities.set(_.difference(tmp, this._id));
+   
+
   },
         
   "click .activity-select-submit-btn": function (e) {
     e.preventDefault();
+     $('.update-tags-btn').click();
     Session.set("show-activity-select-modal", false);
   },
   "click .deleteActivity": function (e) {
    var tmp = selectedActivities.get();
    selectedActivities.set(_.difference(tmp,this._id));
+    var oneAct = Activities.find(this._id).fetch()[0];
+    var brainList = oneAct.brainTargets;
+     for (var j = 0;j < brainList.length;j++) {
+		  var tem = bt.get();
+		  bt.set(_.difference(tem,brainList[j]));
+     }
+   $('.update-tags-btn').click();
   },
   "click .deleteOriActivity":function(e) {
    var tmp = acts.get();
    var tmp2 = bin.get();
    acts.set(_.difference(tmp,this._id));
    bin.set(_.union(tmp2,this._id));
+    var oneAct = Activities.find(this._id).fetch()[0];
+    var brainList = oneAct.brainTargets;
+     for (var j = 0;j < brainList.length;j++) {
+		  var tem = bt.get();
+		  bt.set(_.difference(tem,brainList[j]));
+     }
+    $('.update-tags-btn').click();
   }
 });
 
