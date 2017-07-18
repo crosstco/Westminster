@@ -172,7 +172,9 @@ var validateActivity = function(activity) {
 		  return -1;
       }else if( activity.description === "" ){
 		  return -3;
-	  }  else
+	  }else if(activity.brainTargets.length<=0){
+		  return -4;
+	  }else
 	  {
         return 0;
       }
