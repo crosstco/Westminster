@@ -32,15 +32,28 @@ Template.activitySubmit.events({
       documents: currentFileObjs.get(),
       time: Number($('#time-slider').val()),
     };
+
+  var result = checkduplicatedActivity(activity);
+  if(result == false){
+    window.alert("Please choose another title");
+    return;
+  }
+  //checkduplicatedActivity(activity);
+    
+      
 	var err = validateActivity(activity);
-    if(err == 0) {
+    if(err == 0) { 
       if ($("#activity-submit-tutorial-link").val() != "") {
         var errorCount = backendValidateActivity(activity);
         if (errorCount === 1) {
           return (tutLinkErrorFunc(activity));
         } 
       }
-    }else if (err === -2) {
+
+    }
+    
+
+    else if (err === -2) {
        window.alert("Please fill out the program title");
        return;
     }else if (err === -1) {
@@ -53,6 +66,8 @@ Template.activitySubmit.events({
        window.alert("Please Check at least one brain target");
        return;
     }
+
+
 
     console.log(activity);
 
