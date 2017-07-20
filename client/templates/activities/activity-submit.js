@@ -58,6 +58,12 @@ Template.activitySubmit.events({
        window.alert("Please Check at least one brain target");
        return;
     }
+     else if (err === -5){
+       window.alert("Name already exists. Please rename the activity");
+       return;
+    }
+     
+    
 
 
 
@@ -177,6 +183,10 @@ var uploadComplete = function (numberOfUploads, documentPaths) {
 }
 
 var validateActivity = function(activity) {
+      var duplicated = Activities.find({title: activity.title}).count();
+      if(duplicated != 0){
+      return -5;
+    }
       if (activity.title === "" ){
 		  return -2;
 	  } else if (activity.tags === "") {

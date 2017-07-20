@@ -37,6 +37,11 @@ Template.programSubmit.events({
         }
       }
     }
+
+    else if (code === -5) {
+      window.alert("Name already exists. Please rename the program");
+      return;
+    }
     else if (code === -2) {
        window.alert("Please fill out the program title");
        return;
@@ -136,7 +141,12 @@ Template.programSubmit.helpers({
 
 
 var validateProgram = function(program) {
-  if (program.title === ""){
+
+  var duplicated = Programs.find({title: program.title}).count();
+      if(duplicated != 0){
+      return -5;
+    }
+    else if (program.title === ""){
     return -2;
   } else if (program.description == "") {
     return -3;	  
