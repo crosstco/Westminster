@@ -31,15 +31,7 @@ Template.activitySubmit.events({
       tutorialLink: $("#activity-submit-tutorial-link").val(),
       documents: currentFileObjs.get(),
       time: Number($('#time-slider').val()),
-    };
-
-  var result = checkduplicatedActivity(activity);
-  if(result == false){
-    window.alert("Please choose another title");
-    return;
-  }
-  //checkduplicatedActivity(activity);
-    
+    };    
       
 	var err = validateActivity(activity);
     if(err == 0) { 
@@ -72,9 +64,13 @@ Template.activitySubmit.events({
     console.log(activity);
 
     Meteor.call("insertActivity", activity, function (error, result) {
-      if (error)
-        return console.log("Could not insert Activity. Reason: " + error.reason);
+      if (error){
+        var errorMsg = "Could not insert Activity. Reason: " + error.reason;
+        window.alert(errorMsg);
+        return console.log(errorMsg);
 
+      }
+        
       Session.set("documents-ready", false);
       Router.go("activityDetails", { _id: result._id });
     });
