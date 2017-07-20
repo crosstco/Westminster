@@ -56,13 +56,23 @@ Template.programPage.helpers({
          
     }
     //console.log(bt.get()); 
-  
-    return this.activityIds && Activities.find({
-      _id: {
-        $in: acts.get(),
-      },
-      
-    }) || [];
+ 	
+	
+	if (this.activityIds) {
+		var temp =  Activities.find({_id: {$in: acts.get()}});
+	  var temp2 = [];
+	  
+	  for(var j = 0;j<acts.get().length;j++){
+	  for(var i = 0;i<temp.fetch().length;i++){
+		if(acts.get()[j]== temp.fetch()[i]._id){
+			temp2.push(temp.fetch()[i]);
+			break;
+		}
+	  }
+	  }
+	  return temp2;
+    }
+	
   },
     // Appropriately sets brain targets to checked/unchecked
   attentionChecked: function () {
@@ -105,13 +115,18 @@ Template.programPage.helpers({
   },
   selectedActivities: function () {
      if (selectedActivities.get()) {
-      
-     // selectedActivities.set(all);
-      return Activities.find({
-        _id: {
-           $in: selectedActivities.get()
-        }
-      });
+		var temp =  Activities.find({_id: {$in: selectedActivities.get()}});
+	  var temp2 = [];
+	  
+	  for(var j = 0;j<selectedActivities.get().length;j++){
+	  for(var i = 0;i<temp.fetch().length;i++){
+		if(selectedActivities.get()[j]== temp.fetch()[i]._id){
+			temp2.push(temp.fetch()[i]);
+			break;
+		}
+	  }
+	  }
+	  return temp2;
     }
   }
 })
