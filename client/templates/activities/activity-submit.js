@@ -21,7 +21,6 @@ Template.activitySubmit.events({
     e.preventDefault();
 
     var filterList = getFilterList();
-    uploadFiles();
 
     var activity = {
       title: $("#activity-submit-title").val(),
@@ -53,7 +52,7 @@ Template.activitySubmit.events({
        window.alert("Please Check at least one brain target");
        return;
     }
-
+	uploadFiles();
     console.log(activity);
 
     Meteor.call("insertActivity", activity, function (error, result) {
