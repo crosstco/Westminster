@@ -1,3 +1,6 @@
+ /*
+This file has the logic of the program details page. It prints the details of each program along with the links of activities and buttons to edit or favorite a program.
+*/
 const activityIds = new ReactiveVar();
 
 Template.programDetails.onRendered(() => {
