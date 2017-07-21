@@ -1,14 +1,17 @@
-const activityIds = new ReactiveVar();
+ /*
+This file has the logic of the program details page. It prints the details of each program along with the links of activities and buttons to edit or favorite a program.
+*/
 const id = new ReactiveVar();
+const data = new ReactiveVar();
 
 
-Template.programDetails.onRendered(() => {
+Template.programDetails.onRendered(function () {
+
   Tracker.autorun(() => {
-    if (this.activityIds) activityIds.set(this.activityIds);
-
+    if (this.data) data.set(this.data);
   });
-  
-  //initIcons();
+
+  initIcons();
 });
 
 Template.programDetails.helpers({
@@ -31,7 +34,6 @@ Template.programDetails.helpers({
 Template.programDetails.events({
   'click .favorite-icon': (e) => {
     $('.favorite-icon').toggleClass('favorited');
-
     const favorited = $('.favorite-icon').hasClass('favorited');
     Meteor.call('updateFavoriteProgram', id.one, favorited, (error, result) => {
       if (error) return console.error(`Did not update favorites. Reason: ${error.reason}`);
@@ -41,8 +43,9 @@ Template.programDetails.events({
 });
 
 function initIcons() {
-  if (Meteor.user() && this.get()) {
-    if (_.indexOf(Meteor.user().profile.favoritePrograms, this.get()._id) !== -1) {
+	
+  if (Meteor.user() && data.get()) {
+    if (_.indexOf(Meteor.user().profile.favoritePrograms, data.get()._id) !== -1) {
       $('.favorite-icon').addClass('favorited');
     }
   }
