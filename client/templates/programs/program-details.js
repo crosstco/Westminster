@@ -1,11 +1,15 @@
  /*
 This file has the logic of the program details page. It prints the details of each program along with the links of activities and buttons to edit or favorite a program.
 */
+
 const id = new ReactiveVar();
 const data = new ReactiveVar();
 
 
 Template.programDetails.onRendered(function () {
+
+const activityIds = new ReactiveVar();
+
 
   Tracker.autorun(() => {
     if (this.data) data.set(this.data);
@@ -23,11 +27,22 @@ Template.programDetails.helpers({
     return user && user.profile;
   },
   activities() {
-    return this.activityIds && Activities.find({
-      _id: {
-        $in: this.activityIds,
-      },
-    }) || [];
+
+	if (this.activityIds) {
+		var temp =  Activities.find({_id: {$in: this.activityIds}});
+	  var temp2 = [];
+	  
+	  for(var j = 0;j<this.activityIds.length;j++){
+	  for(var i = 0;i<temp.fetch().length;i++){
+		if(this.activityIds[j]== temp.fetch()[i]._id){
+			temp2.push(temp.fetch()[i]);
+			break;
+		}
+	  }
+	  }
+	  return temp2;
+    }
+	
   }
 });
 

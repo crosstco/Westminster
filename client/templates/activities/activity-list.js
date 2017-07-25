@@ -44,7 +44,7 @@ Template.activityList.events({
       "Planning/Judgement": $("#Planning-filter").is(':checked'),
       "Computation": $("#Computation-filter").is(':checked'),
       "Working Memory": $("#Working-filter").is(':checked'),
-      "Long Term Memory": $("#Longtermfilter").is(':checked'),
+      "Long Term Memory": $("#Longterm-filter").is(':checked'),
       "Emotional Memory": $("#Emotional-filter").is(':checked'),
     };
     // Reset active filter list.
