@@ -30,43 +30,36 @@ Template.activitySubmit.events({
       tutorialLink: $("#activity-submit-tutorial-link").val(),
       documents: currentFileObjs.get(),
       time: Number($('#time-slider').val()),
-    };    
-      
+    };
+
 	var err = validateActivity(activity);
-    if(err == 0) { 
+    if(err == 0) {
       if ($("#activity-submit-tutorial-link").val() != "") {
         var errorCount = backendValidateActivity(activity);
         if (errorCount === 1) {
           return (tutLinkErrorFunc(activity));
-        } 
+        }
       }
-
     }
-    
-
     else if (err === -2) {
-       window.alert("Please fill out the program title");
-       return;
-    }else if (err === -1) {
-       window.alert("Please fill out the program tags");
-       return;
-    }else if (err === -3) {
-       window.alert("Please fill out the program description");
-       return;
-    }else if (err === -4) {
-       window.alert("Please Check at least one brain target");
-       return;
+      window.alert("Please fill out the program title");
+      return;
+    } else if (err === -1) {
+      window.alert("Please fill out the program tags");
+      return;
+    } else if (err === -3) {
+      window.alert("Please fill out the program description");
+      return;
+    } else if (err === -4) {
+      window.alert("Please Check at least one brain target");
+      return;
+    } else if (err === -5){
+      window.alert("Name already exists. Please rename the activity");
+      return;
     }
 
-	uploadFiles();
-
-     else if (err === -5){
-       window.alert("Name already exists. Please rename the activity");
-       return;
-    }
-
-    console.log(activity);
-
+    uploadFiles();
+    
     Meteor.call("insertActivity", activity, function (error, result) {
       if (error){
         var errorMsg = "Could not insert Activity. Reason: " + error.reason;
@@ -74,7 +67,7 @@ Template.activitySubmit.events({
         return console.log(errorMsg);
 
       }
-        
+
       Session.set("documents-ready", false);
       Router.go("activityDetails", { _id: result._id });
     });
@@ -257,7 +250,7 @@ var appendYoutube = function(activity) {
       }
     }
   }
-  
+
 
   if(youtubeCheck) {
     var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
