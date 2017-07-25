@@ -2,7 +2,9 @@
 This file has the logic of the program submission page. It validates the inputs user gives, and submits the valid input to the DataBase.
 */
 var currentFiles = new ReactiveVar();
-var selectedActivities = new ReactiveVar()
+var selectedActivities = new ReactiveVar();
+var temSelect = new ReactiveVar();
+temSelect.set([]);
 
 Template.programSubmit.onRendered(function () {
   Session.set("program-docs", []);
@@ -81,6 +83,7 @@ Template.programSubmit.events({
   /* Activity Select Modal */
   "click .add-activities-btn": function (e) {
     e.preventDefault();
+	temSelect.set(selectedActivities.get());
     Session.set("show-activity-select-modal", true);
   },
   "click .activity-select-cancel-btn": function (e) {
@@ -89,14 +92,16 @@ Template.programSubmit.events({
   },
   "click .activity-select-modal-item": function (e) {
     e.preventDefault();
-
-    var tmp = selectedActivities.get();
+    var tmp = temSelect.get();
     $(e.target).toggleClass("selected");
 
-    if ($(e.target).hasClass("selected"))
-      selectedActivities.set(_.union(tmp, this._id));
-    else
-      selectedActivities.set(_.difference(tmp, this._id));
+    if ($(e.target).hasClass("selected")){
+      temSelect.set(_.union(tmp, this._id));
+	}
+    else{
+      temSelect.set(_.difference(tmp, this._id));
+	}
+	
   },
    "click .deleteActivity": function (e) {
    var tmp = selectedActivities.get();
@@ -107,6 +112,9 @@ Template.programSubmit.events({
   },
   "click .activity-select-submit-btn": function (e) {
     e.preventDefault();
+	
+	selectedActivities.set(temSelect.get());
+	
     Session.set("show-activity-select-modal", false);
   }
 });
@@ -130,11 +138,18 @@ Template.programSubmit.helpers({
   },
   selectedActivities: function () {
     if (selectedActivities.get()) {
-      return Activities.find({
-        _id: {
-          $in: selectedActivities.get()
-        }
-      });
+      var temp =  Activities.find({_id: {$in: selectedActivities.get()}});
+	  var temp2 = [];
+	  
+	  for(var j = 0;j<selectedActivities.get().length;j++){
+	  for(var i = 0;i<temp.fetch().length;i++){
+		if(selectedActivities.get()[j]== temp.fetch()[i]._id){
+			temp2.push(temp.fetch()[i]);
+			break;
+		}
+	  }
+	  }
+	  return temp2;
     }
   }
 })
