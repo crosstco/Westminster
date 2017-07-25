@@ -21,7 +21,6 @@ Template.activitySubmit.events({
     e.preventDefault();
 
     var filterList = getFilterList();
-    uploadFiles();
 
     var activity = {
       title: $("#activity-submit-title").val(),
@@ -58,14 +57,13 @@ Template.activitySubmit.events({
        window.alert("Please Check at least one brain target");
        return;
     }
+
+	uploadFiles();
+
      else if (err === -5){
        window.alert("Name already exists. Please rename the activity");
        return;
     }
-     
-    
-
-
 
     console.log(activity);
 
