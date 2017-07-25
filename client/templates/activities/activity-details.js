@@ -36,7 +36,6 @@ Template.activityDetails.helpers({
 Template.activityDetails.events({
   'click .favorite-icon': (e) => {
     $('.favorite-icon').toggleClass('favorited');
-
     const favorited = $('.favorite-icon').hasClass('favorited');
     Meteor.call('updateFavoriteActivity', data.get()._id, favorited, (error, result) => {
       if (error) return console.error(`Did not update favorites. Reason: ${error.reason}`);

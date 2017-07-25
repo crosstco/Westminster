@@ -30,16 +30,21 @@ Template.activitySubmit.events({
       tutorialLink: $("#activity-submit-tutorial-link").val(),
       documents: currentFileObjs.get(),
       time: Number($('#time-slider').val()),
-    };
+    };    
+      
 	var err = validateActivity(activity);
-    if(err == 0) {
+    if(err == 0) { 
       if ($("#activity-submit-tutorial-link").val() != "") {
         var errorCount = backendValidateActivity(activity);
         if (errorCount === 1) {
           return (tutLinkErrorFunc(activity));
         } 
       }
-    }else if (err === -2) {
+
+    }
+    
+
+    else if (err === -2) {
        window.alert("Please fill out the program title");
        return;
     }else if (err === -1) {
@@ -52,13 +57,24 @@ Template.activitySubmit.events({
        window.alert("Please Check at least one brain target");
        return;
     }
+
 	uploadFiles();
+
+     else if (err === -5){
+       window.alert("Name already exists. Please rename the activity");
+       return;
+    }
+
     console.log(activity);
 
     Meteor.call("insertActivity", activity, function (error, result) {
-      if (error)
-        return console.log("Could not insert Activity. Reason: " + error.reason);
+      if (error){
+        var errorMsg = "Could not insert Activity. Reason: " + error.reason;
+        window.alert(errorMsg);
+        return console.log(errorMsg);
 
+      }
+        
       Session.set("documents-ready", false);
       Router.go("activityDetails", { _id: result._id });
     });
@@ -165,6 +181,10 @@ var uploadComplete = function (numberOfUploads, documentPaths) {
 }
 
 var validateActivity = function(activity) {
+      var duplicated = Activities.find({title: activity.title}).count();
+      if(duplicated != 0){
+      return -5;
+    }
       if (activity.title === "" ){
 		  return -2;
 	  } else if (activity.tags === "") {
