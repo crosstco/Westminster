@@ -8,7 +8,7 @@ Meteor.publish("programById", function (programId) {
 });
 
 Meteor.publish("programFiles", function () {
-  return ProgramsFiles.find();
+  return ProgramFiles.find();
 });
 
 Meteor.publish("activities", function () {
