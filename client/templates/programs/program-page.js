@@ -14,6 +14,8 @@
 const activityIds = new ReactiveVar();
 //selectedActivities is used to store newly selected Activities
 var selectedActivities = new ReactiveVar();
+var temSelect = new ReactiveVar();
+temSelect.set([]);
 //bin is used to store all the deleted activities. Seems like adundant, 
 //but it's crucial for initialising the acts, which holds the orignial
 //activities 
@@ -54,13 +56,23 @@ Template.programPage.helpers({
          
     }
     //console.log(bt.get()); 
-  
-    return this.activityIds && Activities.find({
-      _id: {
-        $in: acts.get(),
-      },
-      
-    }) || [];
+ 	
+	
+	if (this.activityIds) {
+		var temp =  Activities.find({_id: {$in: acts.get()}});
+	  var temp2 = [];
+	  
+	  for(var j = 0;j<acts.get().length;j++){
+	  for(var i = 0;i<temp.fetch().length;i++){
+		if(acts.get()[j]== temp.fetch()[i]._id){
+			temp2.push(temp.fetch()[i]);
+			break;
+		}
+	  }
+	  }
+	  return temp2;
+    }
+	
   },
     // Appropriately sets brain targets to checked/unchecked
   attentionChecked: function () {
@@ -103,13 +115,18 @@ Template.programPage.helpers({
   },
   selectedActivities: function () {
      if (selectedActivities.get()) {
-      
-     // selectedActivities.set(all);
-      return Activities.find({
-        _id: {
-           $in: selectedActivities.get()
-        }
-      });
+		var temp =  Activities.find({_id: {$in: selectedActivities.get()}});
+	  var temp2 = [];
+	  
+	  for(var j = 0;j<selectedActivities.get().length;j++){
+	  for(var i = 0;i<temp.fetch().length;i++){
+		if(selectedActivities.get()[j]== temp.fetch()[i]._id){
+			temp2.push(temp.fetch()[i]);
+			break;
+		}
+	  }
+	  }
+	  return temp2;
     }
   }
 })
@@ -167,6 +184,7 @@ Template.programPage.events({
   },
   "click .add-activities-btn": function (e) {
     e.preventDefault();
+	temSelect.set(selectedActivities.get());
     Session.set("show-activity-select-modal", true);
   },
   
@@ -200,30 +218,31 @@ Template.programPage.events({
   },
   "click .activity-select-modal-item": function (e) {
     e.preventDefault();
-    if (!selectedActivities.get()) {
-	selectedActivities.set(program.activityIds);
+    if (!temSelect.get()) {
+	temSelect.set(program.activityIds);
     }
-    var tmp = selectedActivities.get();
+    var tmp = temSelect.get();
     var tem = acts.get();
     $(e.target).toggleClass("selected");
     if ($(e.target).hasClass("selected")) {
       var index1 = tmp.indexOf(this._id);
       var index2 = tem.indexOf(this._id);
       if (index1 < 0 && index2 < 0) {
-        selectedActivities.set(_.union(tmp, this._id));
+        temSelect.set(_.union(tmp, this._id));
       }
       else {
 	 window.alert(Activities.find(this._id).fetch()[0].title+" has been added");
       }
     }
     else
-      selectedActivities.set(_.difference(tmp, this._id));
+      temSelect.set(_.difference(tmp, this._id));
    
 
   },
         
   "click .activity-select-submit-btn": function (e) {
     e.preventDefault();
+	selectedActivities.set(temSelect.get());
      $('.update-tags-btn').click();
     Session.set("show-activity-select-modal", false);
   },

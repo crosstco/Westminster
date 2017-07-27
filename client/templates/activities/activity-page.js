@@ -115,6 +115,12 @@ Template.activityPage.events({
         return console.log("Could not update Activity. Reason: " + error.reason);
       Router.go("activityDetails", { _id: result._id });
     });
+
+   // Meteor.call("checkduplicatedActivity", activity, this.title, function (error, result) {
+     // if(error)
+       // return console.log("Duplicated activity name. Reason: " + error.reason);
+     // Router.go("activityDetails", {title: result.title});
+   // });
   },
   "change .activity-file-input": function (e) {
     Session.set("upload-status", "Uploading...");
