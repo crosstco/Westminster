@@ -57,6 +57,13 @@ Template.programDetails.events({
     var programId = Router.current().url.split('/').pop();
     Meteor.call('mergeProgramFiles', programId, (error, result) => {
 
+      const cursor = ProgramFiles.find({"metadata.programID" : programId});
+      const handle = cursor.observeChanges({
+        added(id, fields) {
+          console.log(ProgramFiles.findOne({"metadata.programID" : programId}));
+        }
+      });
+
     });
   }
 });
