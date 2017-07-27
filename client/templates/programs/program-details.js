@@ -9,8 +9,7 @@ const data = new ReactiveVar();
 const programFileUrl = new ReactiveVar();
 
 Template.programDetails.onRendered(function () {
-
-const activityIds = new ReactiveVar();
+  const activityIds = new ReactiveVar();
   Tracker.autorun(() => {
     if (this.data) {
       data.set(this.data);
@@ -29,18 +28,18 @@ Template.programDetails.helpers({
   },
   activities() {
     if (this.activityIds) {
-		    var temp =  Activities.find({_id: {$in: this.activityIds}});
-	      var temp2 = [];
-        for (var j = 0; j < this.activityIds.length; j++) {
-          for (var i = 0; i< temp.fetch().length; i++) {
-            if (this.activityIds[j] == temp.fetch()[i]._id) {
-              temp2.push(temp.fetch()[i]);
-			        break;
-		        }
+		  var temp =  Activities.find({_id: {$in: this.activityIds}});
+	    var temp2 = [];
+      for (var j = 0; j < this.activityIds.length; j++) {
+        for (var i = 0; i< temp.fetch().length; i++) {
+          if (this.activityIds[j] == temp.fetch()[i]._id) {
+            temp2.push(temp.fetch()[i]);
+		        break;
 	        }
         }
-	      return temp2;
       }
+      return temp2;
+    }
   }
 });
 
@@ -51,6 +50,13 @@ Template.programDetails.events({
     Meteor.call('updateFavoriteProgram', id.one, favorited, (error, result) => {
       if (error) return console.error(`Did not update favorites. Reason: ${error.reason}`);
       console.log(`Favorites: ${Meteor.user().profile.favoritePrograms}`);
+    });
+  },
+
+  'click .merge-icon': (e) => {
+    var programId = Router.current().url.split('/').pop();
+    Meteor.call('mergeProgramFiles', programId, (error, result) => {
+
     });
   }
 });
