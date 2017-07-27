@@ -1,42 +1,78 @@
-Template.reset.events({
-	"submit #reset-form": function (e) {
-		e.preventDefault();
-		var userEmail = $("reset-email").val();
-		if (userEmail === "") {
-			// Tell user to enter.
-			window.alert("Please provide your email address");}
-		    else {
-			// Check if user email is registered.
-			// If Yes, then reset. Send the user an email to reset password
-			if(userEmail == Meteor.users.findOne({"emails.0.address": userEmail}))
-			{
-				Accounts.emailTemplates.siteName = 'Westminster brain bootcamps';
-				Accounts.emailTemplates.from = '<brainbootcamps@gmail.com>';
-				Accounts.emailTemplates.enrollAccount.subject = (user) => {
-                return `Welcome to Westminster Brainboot Camps, ${user.profile.name}`;
-                };
-                Accounts.emailTemplates.enrollAccount.text = (user, url) => {
-                return 'Forgot your password? Let us help you to find it!'
-                + ' To activate your account, simply click the link below:\n\n'
-                + url
-       
-                Accounts.emailTemplates.resetPassword.from = () => {
-                // Overrides the value set in `Accounts.emailTemplates.from` when resetting
-                // passwords.
-                return 'Westminster Password Reset <brainbootcamps@gmail.com>';
-                };
-                Accounts.emailTemplates.verifyEmail = {
-                subject() {
-                return "Activate your account now!";
-                },
-                text(user, url) {
-                return `Hey ${user}! Verify your e-mail by following this link: ${url}`;
-                }
-};
+//Template.reset.events({
+	//"click .submit-btn": function (e) {
+		//e.preventDefault();
+ // var userId = Meteor.users.findOne({'emails.address':email});
+  //var userEmail = Template.find('#reset-email').value;
+  //console.log(userEmail);
+ // Accounts.sendResetPasswordEmail(
+   // userId,
+    
+//)
+//});
 
 
-			}
-			// If No, then show alert saying email not in database.
-		}
-	}
-}})
+
+
+
+
+//   Accounts.sendResetPasswordEmail = function (userId, email) {
+//   // Make sure the user exists, and email is one of their addresses.
+//   var user = Meteor.users.findOne(userId);
+//   if (!user) {
+//     handleError("Can't find user");
+//   }
+
+//   // pick the first email if we weren't passed an email.
+//   if (!email && user.emails && user.emails[0]) {
+//     email = user.emails[0].address;
+//   }
+
+//   // make sure we have a valid email
+//   if (!email || !_.contains(_.pluck(user.emails || [], 'address'), email)) {
+//     handleError("No such email for user.");
+//   }
+
+//   var token = Random.secret();
+//   var when = new Date();
+//   var tokenRecord = {
+//     token: token,
+//     email: email,
+//     when: when,
+//     reason: 'reset'
+//   };
+//   Meteor.users.update(userId, {$set: {
+//     "services.password.reset": tokenRecord
+//   }});
+  
+//   // before passing to template, update user object with new token
+//   Meteor._ensure(user, 'services', 'password').reset = tokenRecord;
+
+//   var resetPasswordUrl = Accounts.urls.resetPassword(token);
+
+//   var options = {
+//     to: email,
+//     from: Accounts.emailTemplates.resetPassword.from
+//       ? Accounts.emailTemplates.resetPassword.from(user)
+//       : Accounts.emailTemplates.from,
+//     subject: Accounts.emailTemplates.resetPassword.subject(user)
+//   };
+
+//   if (typeof Accounts.emailTemplates.resetPassword.text === 'function') {
+//     options.text =
+//       Accounts.emailTemplates.resetPassword.text(user, resetPasswordUrl);
+//   }
+
+//   if (typeof Accounts.emailTemplates.resetPassword.html === 'function') {
+//     options.html =
+//       Accounts.emailTemplates.resetPassword.html(user, resetPasswordUrl);
+//   }
+
+//   if (typeof Accounts.emailTemplates.headers === 'object') {
+//     options.headers = Accounts.emailTemplates.headers;
+//   }
+
+//   Email.send(options);
+// };
+
+		
+//}})
