@@ -84,5 +84,6 @@ settings.json
 # Ignore Windows VIM backup files.
 *~
 
+node_modules/bcrypt/.meteor-portable-1.json
 
 # End of https://www.gitignore.io/api/meteorjs

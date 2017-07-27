@@ -7,6 +7,10 @@ Meteor.publish("programById", function (programId) {
   return Programs.find(programId);
 });
 
+Meteor.publish("programFiles", function () {
+  return ProgramFiles.find();
+});
+
 Meteor.publish("activities", function () {
   return Activities.find();
 });
