@@ -1,15 +1,45 @@
-//Template.reset.events({
-	//"click .submit-btn": function (e) {
-		//e.preventDefault();
- // var userId = Meteor.users.findOne({'emails.address':email});
-  //var userEmail = Template.find('#reset-email').value;
-  //console.log(userEmail);
- // Accounts.sendResetPasswordEmail(
-   // userId,
-    
-//)
-//});
+import {Accounts} from 'meteor/accounts-base'
 
+Template.reset.events({
+	"submit #reset-form": function (e) {
+		e.preventDefault();
+  		var userEmail = $("#reset-email").val();
+  		//var userId = Meteor.users.findOne({'emails.address':userEmail});
+  		//console.log(userId._id);
+  		Accounts.forgotPassword({email:userEmail,function(err){
+  			if (err) {
+  				console.log('Error: ',err);
+
+  			}
+  			else {
+  				console.log('Email sent');
+  				Router.go('login');
+
+  			}
+
+  		}})
+    }
+});
+
+//Template.login.events({
+////	"submit #login-form": function (e) {
+	//	e.preventDefault();
+//
+//		Meteor.loginWithPassword(
+//			{ email: $(e.target).find("#login-email").val() },
+//			$(e.target).find("#login-password").val(),
+//			function (error) {
+//				if (error) {
+//					$("#login-password").val("");
+//					$("#login-email").select();
+//					throwError("The email or password you entered is incorrect. Please try again.");
+//				} else {
+//					Router.go("welcome");
+//				}
+//			}
+//		);
+//	}
+//});
 
 
 
