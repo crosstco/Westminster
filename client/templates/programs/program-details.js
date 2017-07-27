@@ -4,9 +4,13 @@
  * and buttons to edit or favorite a program.
  */
 
+var Docxtemplater = require('docxtemplater');
+var JSZip = require('jszip');
+var JSZipUtils = require('jszip-utils');
+var saveAs = require('file-saver').saveAs;
+
 const id = new ReactiveVar();
 const data = new ReactiveVar();
-const programFileUrl = new ReactiveVar();
 
 Template.programDetails.onRendered(function () {
   const activityIds = new ReactiveVar();
@@ -55,16 +59,46 @@ Template.programDetails.events({
 
   'click .merge-icon': (e) => {
     var programId = Router.current().url.split('/').pop();
-    Meteor.call('mergeProgramFiles', programId, (error, result) => {
-
-      const cursor = ProgramFiles.find({"metadata.programID" : programId});
-      const handle = cursor.observeChanges({
-        added(id, fields) {
-          console.log(ProgramFiles.findOne({"metadata.programID" : programId}));
-        }
-      });
-
+    var programObj = Programs.findOne(programId);
+    var insertedDocuments = [];
+    programObj.activityIds.forEach(function(activityId) {
+      var activityObj = Activities.findOne(activityId);
+      var documentObj = ActivityFiles.findOne(activityObj.documents.pop()._id);
+      JSZipUtils.getBinaryContent(documentObj.url(), callback);
+      function callback(error, content) {
+        var zip = new JSZip(content);
+        var doc = new Docxtemplater().loadZip(zip);
+        var xml = zip.files[doc.fileTypeConfig.textPath].asText();
+        xml = xml.substring(xml.indexOf("<w:body>") + 8);
+        xml = xml.substring(0, xml.indexOf("</w:body>"));
+        xml = xml.substring(0, xml.indexOf("<w:sectPr"));
+        insertedDocuments.push(xml);
+      }
     });
+    JSZipUtils.getBinaryContent('/assets/template.docx', callback);
+    function callback(error, content) {
+      console.log(content);
+      var zip = new JSZip(content);
+      var doc = new Docxtemplater().loadZip(zip);
+      setData(doc);
+    }
+
+
+    function setData(doc) {
+      doc.setData({
+        body: insertedDocuments.join('<w:br/><w:br/>')
+      });
+      doc.render();
+      useResult(doc);
+    }
+
+    function useResult(doc) {
+      var out = doc.getZip().generate({
+        type: 'blob',
+        mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      });
+      saveAs(out, programObj.name + '.docx');
+    }
   }
 });
 
