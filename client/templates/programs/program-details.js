@@ -61,11 +61,15 @@ Template.programDetails.events({
     var programId = Router.current().url.split('/').pop();
     var programObj = Programs.findOne(programId);
     var insertedDocuments = [];
+    var count = programObj.activityIds.length;
+
     programObj.activityIds.forEach(function(activityId) {
+
       var activityObj = Activities.findOne(activityId);
       var documentObj = ActivityFiles.findOne(activityObj.documents.pop()._id);
       JSZipUtils.getBinaryContent(documentObj.url(), callback);
       function callback(error, content) {
+        console.log('CALLED');
         var zip = new JSZip(content);
         var doc = new Docxtemplater().loadZip(zip);
         var xml = zip.files[doc.fileTypeConfig.textPath].asText();
@@ -73,32 +77,34 @@ Template.programDetails.events({
         xml = xml.substring(0, xml.indexOf("</w:body>"));
         xml = xml.substring(0, xml.indexOf("<w:sectPr"));
         insertedDocuments.push(xml);
+        if (insertedDocuments.length == count - 1) {
+          JSZipUtils.getBinaryContent('/assets/template.docx', callback);
+          function callback(error, content) {
+            console.log(content);
+            var zip = new JSZip(content);
+            var doc = new Docxtemplater().loadZip(zip);
+            setData(doc);
+          }
+
+          function setData(doc) {
+            doc.setData({
+              body: insertedDocuments.join('<w:br/><w:br/>')
+            });
+            doc.render();
+            useResult(doc);
+          }
+
+          function useResult(doc) {
+            var out = doc.getZip().generate({
+              type: 'blob',
+              mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            });
+            saveAs(out, programObj.name + '.docx');
+            insertedDocuments = [];
+          }
+        }
       }
     });
-    JSZipUtils.getBinaryContent('/assets/template.docx', callback);
-    function callback(error, content) {
-      console.log(content);
-      var zip = new JSZip(content);
-      var doc = new Docxtemplater().loadZip(zip);
-      setData(doc);
-    }
-
-
-    function setData(doc) {
-      doc.setData({
-        body: insertedDocuments.join('<w:br/><w:br/>')
-      });
-      doc.render();
-      useResult(doc);
-    }
-
-    function useResult(doc) {
-      var out = doc.getZip().generate({
-        type: 'blob',
-        mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-      });
-      saveAs(out, programObj.name + '.docx');
-    }
   }
 });
 
