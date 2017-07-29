@@ -16,7 +16,7 @@ Template.programList.onCreated(function () {
 });
 
 /*
- * Expose programs and index variables after applying EasySearch fitlers.
+ * Expose programs and index variables after applying EasySearch filters.
  */
 Template.programList.helpers({
   programs: function () {
