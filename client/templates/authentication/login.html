@@ -13,9 +13,11 @@
 						<button type="submit" class="btn auth-submit">Login</button>
 
 						<a href="{{ pathFor 'register' }}">
-							<button type="button" class="btn btn-default margin-bottom auth-alt">Don't have an account? Register Here</button>
+							<button type="button" class="btn btn-default auth-alt">Don't have an account? Register Here</button>
 						</a>
-						<!--<p class="auth-desc">Don't have an account? <a href="{{ pathFor 'register' }}">Register here</a></p>-->
+						<a href="{{ pathFor 'reset' }}">
+							<button type="button" class="btn btn-default margin-bottom auth-alt">Forget Your Password? Find Here!</button>
+						</a>
 					</form>
 				</div>
 
