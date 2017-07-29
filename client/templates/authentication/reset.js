@@ -18,3 +18,7 @@ Template.reset.events({
     });
   }
 });
+
+Accounts.onLogin(() => {
+  Router.go('/');
+});
