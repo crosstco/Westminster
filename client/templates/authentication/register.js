@@ -17,7 +17,7 @@ Template.register.events({
 			}
 		}, function (error) {
 			if (error) {
-				alert("There was an error creating your account. Please try again later.");
+				alert(error);
 			} else {
 				Router.go("welcome");
 			}
