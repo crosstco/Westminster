@@ -100,7 +100,6 @@ Template.programDetails.events({
               mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
             });
             saveAs(out, programObj.name + '.docx');
-            insertedDocuments = [];
           }
         }
       }
