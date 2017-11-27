@@ -4,6 +4,7 @@
  * and buttons to edit or favorite a program.
  */
 
+var PDFJS = require('pdfjs-dist');
 var Docxtemplater = require('docxtemplater');
 var JSZip = require('jszip');
 var JSZipUtils = require('jszip-utils');
@@ -60,49 +61,83 @@ Template.programDetails.events({
   'click .merge-icon': (e) => {
     var programId = Router.current().url.split('/').pop();
     var programObj = Programs.findOne(programId);
-    var insertedDocuments = [];
+    //var insertedDocuments = [];
+    var documentURLS = [];
     var count = programObj.activityIds.length;
 
     programObj.activityIds.forEach(function(activityId) {
 
       var activityObj = Activities.findOne(activityId);
       var documentObj = ActivityFiles.findOne(activityObj.documents.pop()._id);
-      JSZipUtils.getBinaryContent(documentObj.url(), callback);
-      function callback(error, content) {
-        console.log('CALLED');
-        var zip = new JSZip(content);
-        var doc = new Docxtemplater().loadZip(zip);
-        var xml = zip.files[doc.fileTypeConfig.textPath].asText();
-        xml = xml.substring(xml.indexOf("<w:body>") + 8);
-        xml = xml.substring(0, xml.indexOf("</w:body>"));
-        xml = xml.substring(0, xml.indexOf("<w:sectPr"));
-        insertedDocuments.push(xml);
-        if (insertedDocuments.length == count - 1) {
-          JSZipUtils.getBinaryContent('/assets/template.docx', callback);
-          function callback(error, content) {
-            console.log(content);
-            var zip = new JSZip(content);
-            var doc = new Docxtemplater().loadZip(zip);
-            setData(doc);
-          }
+      //insertedDocuments.push(documentObj);
+      console.log(documentObj.url());
 
-          function setData(doc) {
-            doc.setData({
-              body: insertedDocuments.join('<w:br/><w:br/>')
-            });
-            doc.render();
-            useResult(doc);
-          }
+      var url = documentObj.url();
 
-          function useResult(doc) {
-            var out = doc.getZip().generate({
-              type: 'blob',
-              mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-            });
-            saveAs(out, programObj.name + '.docx');
-          }
-        }
-      }
+      console.log('midpoint');
+
+      //function callback(error, url) {
+
+        PDFJS.getDocument(url)
+          .then(function(pdf) {
+            return pdf.getPage(1);
+          })
+          .then(function(page) {
+            var scale = 1.5;
+
+            var viewport = page.getViewport(scale);
+
+            var canvas = document.getElementById('the-canvas');
+
+            var context = canvas.getContext('2d');
+
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            var renderContext = {
+              canvasContext: context,
+              viewport: viewport
+            };
+            page.render(renderContext);
+          });
+      //}
+
+      // function callback(error, content) {
+      //   console.log('CALLED');
+      //   var zip = new JSZip(content);
+      //   var doc = new Docxtemplater().loadZip(zip);
+      //   var xml = zip.files[doc.fileTypeConfig.textPath].asText();
+      //   xml = xml.substring(xml.indexOf("<w:body>") + 8);
+      //   xml = xml.substring(0, xml.indexOf("</w:body>"));
+      //   xml = xml.substring(0, xml.indexOf("<w:sectPr"));
+      //   console.log(xml);
+      //   insertedDocuments.push(xml);
+      //   if (insertedDocuments.length == count - 1) {
+      //     JSZipUtils.getBinaryContent('/assets/template.docx', callback);
+      //     function callback(error, content) {
+      //       console.log(content);
+      //       var zip = new JSZip(content);
+      //       var doc = new Docxtemplater().loadZip(zip);
+      //       setData(doc);
+      //     }
+
+      //     function setData(doc) {
+      //       doc.setData({
+      //         body: insertedDocuments.join('<w:br/><w:br/>')
+      //       });
+      //       doc.render();
+      //       useResult(doc);
+      //     }
+
+      //     function useResult(doc) {
+      //       var out = doc.getZip().generate({
+      //         type: 'blob',
+      //         mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      //       });
+      //       saveAs(out, programObj.name + '.docx');
+      //     }
+      //   }
+      // }
     });
   }
 });

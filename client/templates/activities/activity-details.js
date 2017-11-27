@@ -26,6 +26,16 @@ Template.activityDetails.helpers({
       return files;
     }
   },
+
+  documentPath: function () {
+  	var activityId = Router.current().url.split('/').pop();
+	var activity = Activities.findOne(activityId);
+	var documentObj = ActivityFiles.findOne(activity.documents.pop()._id);
+
+	return documentObj.url();
+
+  },
+
   owner() {
     return data.get() && Meteor.users.findOne({
       _id: data.get().userId,
