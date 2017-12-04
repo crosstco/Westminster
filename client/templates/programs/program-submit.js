@@ -25,19 +25,19 @@ Template.programSubmit.events({
       description: $("#program-submit-description").val(),
       activityIds: selectedActivities.get(),
       tags: $("#program-submit-tags").val().replace(/\s+/g, "").split(","),
-      tutorialLink: $("#program-submit-tutorial-link").val()
+      //tutorialLink: $("#program-submit-tutorial-link").val()
     };
     var code = validateProgram(program);    
     if(code === 0) {
       /*If the program's frontend validation is true, then move on to specific restriction validation*/
-      if($("#program-submit-tutorial-link").val() != "") {
-        var errorCount = backendValidateProgram(program);
-        if (errorCount === 1) {
-          return (tutLinkErrorFunc());
-        }
-        else {
-        }
-      }
+      // if($("#program-submit-tutorial-link").val() != "") {
+      //   var errorCount = backendValidateProgram(program);
+      //   if (errorCount === 1) {
+      //     return (tutLinkErrorFunc());
+      //   }
+      //   else {
+      //   }
+      // }
     }
 
     else if (code === -5) {
@@ -178,11 +178,11 @@ var tutLinkErrorFunc = function(program) {
   if ($("#tutLinkErrorPopUp").length) {
   } else {
     var tag = document.createElement("p");
-    var text = document.createTextNode("Tutorial Link is not a valid URL, please check and resubmit.");
+    //var text = document.createTextNode("Tutorial Link is not a valid URL, please check and resubmit.");
     tag.appendChild(text);
-    var element = document.getElementById("tutLinkError");
+    //var element = document.getElementById("tutLinkError");
     element.appendChild(tag);
-    document.getElementById("tutLinkError").id = "tutLinkErrorPopUp";
+    //document.getElementById("tutLinkError").id = "tutLinkErrorPopUp";
   }
 }
 
@@ -202,10 +202,11 @@ var submitError = function(program) {
 var backendValidateProgram = function(program) {
   var errorCount = 0;
   var normalURL = new RegExp(/^(ftp|http|https):\/\/[^ "]+$/)
-  var evaluateTutURL = document.getElementById("program-submit-tutorial-link").value;
-  if(normalURL.test(evaluateTutURL) == false) {
-    errorCount += 1;
-  }
+  //var evaluateTutURL = document.getElementById("program-submit-tutorial-link").value;
+  // if(normalURL.test(evaluateTutURL) == false) {
+  //   errorCount += 1;
+  // }
+
   /* If errorCount = 1, only Tutorial link error
   If errorCount = 2, only Document link error
   If errorCount = 3, both Tutorial and Document link error */

@@ -27,19 +27,19 @@ Template.activitySubmit.events({
       description: $("#activity-submit-description").val(),
       brainTargets: filterList,
       tags: $("#activity-submit-tags").val().replace(/\s+/g, "").split(","),
-      tutorialLink: $("#activity-submit-tutorial-link").val(),
+      // tutorialLink: $("#activity-submit-tutorial-link").val(),
       documents: currentFileObjs.get(),
       time: Number($('#time-slider').val()),
     };
 
 	var err = validateActivity(activity);
     if(err == 0) {
-      if ($("#activity-submit-tutorial-link").val() != "") {
-        var errorCount = backendValidateActivity(activity);
-        if (errorCount === 1) {
-          return (tutLinkErrorFunc(activity));
-        }
-      }
+      // if ($("#activity-submit-tutorial-link").val() != "") {
+      //   var errorCount = backendValidateActivity(activity);
+      //   if (errorCount === 1) {
+      //     return (tutLinkErrorFunc(activity));
+      //   }
+      // }
     }
     else if (err === -2) {
       window.alert("Please fill out the program title");
@@ -208,7 +208,7 @@ var submitError = function(activity) {
 var backendValidateActivity = function(activity) {
   var errorCount = 0;
   var normalURL = new RegExp(/^(ftp|http|https):\/\/[^ "]+$/)
-  var evaluateTutURL = document.getElementById("activity-submit-tutorial-link").value;
+  //var evaluateTutURL = document.getElementById("activity-submit-tutorial-link").value;
   if(normalURL.test(evaluateTutURL) == false) {
     errorCount += 1;
   }
@@ -220,17 +220,17 @@ var tutLinkErrorFunc = function(activity) {
   if ($("#tutLinkErrorPopUp").length) {
   } else {
     var tag = document.createElement("p");
-    var text = document.createTextNode("Tutorial Link is not a valid URL, please check and resubmit.");
+    //var text = document.createTextNode("Tutorial Link is not a valid URL, please check and resubmit.");
     tag.appendChild(text);
     var element = document.getElementById("activityTutError");
     element.appendChild(tag);
-    document.getElementById("activityTutError").id = "tutLinkErrorPopUp";
+    //document.getElementById("activityTutError").id = "tutLinkErrorPopUp";
   }
 }
 
 var appendYoutube = function(activity) {
   var youtubeCheck = 0;
-  var tutLink = document.getElementById("activity-submit-tutorial-link").value;
+  //var tutLink = document.getElementById("activity-submit-tutorial-link").value;
   // https://www.youtube.com/watch?v=kMhw5MFYU0s
   // https://www.youtube.com/embed/DfF1KhfZDBM
   for(i = 0; i < tutLink.length; i++) {
@@ -256,8 +256,8 @@ var appendYoutube = function(activity) {
     var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
     var match = tutLink.match(regExp);
     if ( match && match[7].length == 11 ){
-        document.getElementById("activity-submit-tutorial-link").value =  "http://www.youtube.com/embed/" + match[7];
-        console.log(document.getElementById("activity-submit-tutorial-link").value);
+        //document.getElementById("activity-submit-tutorial-link").value =  "http://www.youtube.com/embed/" + match[7];
+        //console.log(document.getElementById("activity-submit-tutorial-link").value);
     }else{
         alert("Could not extract video ID.");
     }
