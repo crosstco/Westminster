@@ -5,9 +5,16 @@ import './program-display.html';
 var PDFJS = require('pdfjs-dist');
 
 
-// The workerSrc property shall be specified.
+// If someone can figure out how to localize this file rather than referencing it from
+// github... please.
 PDFJS.workerSrc = '//mozilla.github.io/pdf.js/build/pdf.worker.js';
 
+
+//Following rendering implementation is an adaptation taken from here:
+//https://stackoverflow.com/questions/9809001/is-there-a-way-to-combine-pdfs-in-pdf-js
+
+
+//Declare globals needed for render function
 var documentURLS = [];
 
   var pdfDocs = [];
@@ -37,27 +44,26 @@ Template.programDisplay.onRendered(function() {
       documentURLS.push(url);
   });
 
-    document.getElementById('next').addEventListener('click', onNextPage);
-    document.getElementById('prev').addEventListener('click', onPrevPage);
-
-
-    pdfDocs = [];
-    current = {};
-    totalPageCount = 0;
-    pageNum = 1;
-    pageRendering = false;
-    pageNumPending = null;
-    scale = 1.5;
-    canvas = document.getElementById('the-canvas');
-    ctx = canvas.getContext('2d');
-
     load();
+
 });
 
     function renderPage(num) {
-        console.log('Render called');
+        //console.log('Render called');
     	pageRendering = true;
     	current = getPageInfo(num);
+
+        // Add new canvas element for this page
+        var canv = document.createElement('canvas');
+        //Give the new canvas element an id of 'the-canvas' + current page
+        canv.id = 'the-canvas' + num;
+        //Apply styling to new canvas object (center it and give it a black border)
+        canv.style = 'border: 1px solid black; padding-left: 0; padding-right: 0; margin-left: auto; margin-right: auto; display: block; width: 800px;';
+        document.getElementById('canvasSection').appendChild(canv);
+
+        canvas = document.getElementById('the-canvas' + num);
+        ctx = canvas.getContext('2d');
+
     	pdfDocs[current.documentIndex].getPage(current.pageNumber).then(function (page) {
     		var viewport = page.getViewport(scale);
     		canvas.height = viewport.height;
@@ -78,11 +84,13 @@ Template.programDisplay.onRendered(function() {
     		});
     	});
 
-    	document.getElementById('page_num').textContent = pageNum;
+    	renderNext();
     }
 
+    //If a page is currently rendering, store the number and call the render
+    //function for this page at the end of renderPage, otherwise render it now.
     function queueRenderPage(num) {
-        console.log('QR called');
+        //console.log('QR called');
     	if (pageRendering) {
     		pageNumPending = num;
     	} else {
@@ -90,29 +98,17 @@ Template.programDisplay.onRendered(function() {
     	}
     }
 
-    function onPrevPage() {
-        console.log('Prev called');
-    	if (pageNum <= 1) {
-    		return;
-    	}
-    	pageNum--;
-    	queueRenderPage(pageNum);
+    //Queue the next page to be rendered if the page exists
+    function renderNext() {
+        if(pageNum >= totalPageCount && current.documentIndex + 1 === pdfDocs.length) {
+            return;
+        }
+        pageNum++;
+        queueRenderPage(pageNum);
     }
     
-
-    function onNextPage() {
-        console.log('Next called');
-    	if (pageNum >= totalPageCount && current.documentIndex + 1 === pdfDocs.length) {
-    		return;
-    	}
-
-    	pageNum++;
-    	queueRenderPage(pageNum);
-    }
-    
-
     function getPageInfo (num) {
-        console.log('PageInfo called');
+        //console.log('PageInfo called');
     	var totalPageCount = 0;
     	for (var docIdx = 0; docIdx < pdfDocs.length; docIdx++) {
     		totalPageCount += pdfDocs[docIdx].numPages;
@@ -125,7 +121,7 @@ Template.programDisplay.onRendered(function() {
     };
 
     function getTotalPageCount() {
-        console.log('TPC called');
+        //console.log('TPC called');
     	var totalPageCount = 0;
     	for (var docIdx = 0; docIdx < pdfDocs.length; docIdx++) {
     		totalPageCount += pdfDocs[docIdx].numPages;
@@ -135,19 +131,20 @@ Template.programDisplay.onRendered(function() {
 
     var loadedCount = 0;
     function load() {
-        console.log('Load called');
-        console.log(documentURLS[loadedCount + 1]);
+        // console.log('Load called');
+        // console.log(documentURLS[loadedCount + 1]);
     	PDFJS.getDocument(documentURLS[loadedCount]).then(function (pdfDoc_) {
     		console.log('loaded PDF ' +  loadedCount);
     		pdfDocs.push(pdfDoc_);
     		loadedCount++;
+
+            //Load all documents recursively
     		if (loadedCount !== documentURLS.length) {
     			return load();
     		}
 
     		console.log('Finished loading');
     		totalPageCount =  getTotalPageCount();
-    		document.getElementById('page_count').textContent = totalPageCount;
 
     		renderPage(pageNum);
     	});
