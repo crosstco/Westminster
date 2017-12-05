@@ -2,17 +2,29 @@ import { Template } from 'meteor/templating';
 
 import './program-display.html';
 
-var pdfjsLib = require('pdfjs-dist');
+var PDFJS = require('pdfjs-dist');
 
 
 // The workerSrc property shall be specified.
 PDFJS.workerSrc = '//mozilla.github.io/pdf.js/build/pdf.worker.js';
 
-Template.activityDisplay.onRendered(function() {
+var documentURLS = [];
+
+  var pdfDocs = [];
+  var current = {};
+  var totalPageCount = 0;
+  var pageNum = 1;
+  var pageRendering = false;
+  var pageNumPending = null;
+  var scale = 0.8;
+  var canvas = null;
+  var ctx = null;
+
+Template.programDisplay.onRendered(function() {
 
 	var programId = Router.current().url.split('/').pop();
     var programObj = Programs.findOne(programId);
-    var documentURLS = [];
+    
 
     programObj.activityIds.forEach(function(activityId) {
 
@@ -25,23 +37,25 @@ Template.activityDisplay.onRendered(function() {
       documentURLS.push(url);
   });
 
-    var pdfDocs = [],
-    current = {},
-    totalPageCount = 0,
-    pageNum = 1,
-    pageRendering = false,
-    pageNumPending = null,
-    scale = 0.8,
-    canvas = document.getElementById('the-canvas'),
-    ctx = canvas.getContext('2d');
-
     document.getElementById('next').addEventListener('click', onNextPage);
     document.getElementById('prev').addEventListener('click', onPrevPage);
+
+
+    pdfDocs = [];
+    current = {};
+    totalPageCount = 0;
+    pageNum = 1;
+    pageRendering = false;
+    pageNumPending = null;
+    scale = 0.8;
+    canvas = document.getElementById('the-canvas');
+    ctx = canvas.getContext('2d');
 
     load();
 });
 
     function renderPage(num) {
+        console.log('Render called');
     	pageRendering = true;
     	current = getPageInfo(num);
     	pdfDocs[current.documentIndex].getPage(current.pageNumber).then(function (page) {
@@ -68,6 +82,7 @@ Template.activityDisplay.onRendered(function() {
     }
 
     function queueRenderPage(num) {
+        console.log('QR called');
     	if (pageRendering) {
     		pageNumPending = num;
     	} else {
@@ -76,6 +91,7 @@ Template.activityDisplay.onRendered(function() {
     }
 
     function onPrevPage() {
+        console.log('Prev called');
     	if (pageNum <= 1) {
     		return;
     	}
@@ -85,6 +101,7 @@ Template.activityDisplay.onRendered(function() {
     
 
     function onNextPage() {
+        console.log('Next called');
     	if (pageNum >= totalPageCount && current.documentIndex + 1 === pdfDocs.length) {
     		return;
     	}
@@ -95,6 +112,7 @@ Template.activityDisplay.onRendered(function() {
     
 
     function getPageInfo (num) {
+        console.log('PageInfo called');
     	var totalPageCount = 0;
     	for (var docIdx = 0; docIdx < pdfDocs.length; docIdx++) {
     		totalPageCount += pdfDocs[docIdx].numPages;
@@ -107,6 +125,7 @@ Template.activityDisplay.onRendered(function() {
     };
 
     function getTotalPageCount() {
+        console.log('TPC called');
     	var totalPageCount = 0;
     	for (var docIdx = 0; docIdx < pdfDocs.length; docIdx++) {
     		totalPageCount += pdfDocs[docIdx].numPages;
@@ -116,11 +135,13 @@ Template.activityDisplay.onRendered(function() {
 
     var loadedCount = 0;
     function load() {
+        console.log('Load called');
+        console.log(documentURLS[loadedCount + 1]);
     	PDFJS.getDocument(documentURLS[loadedCount]).then(function (pdfDoc_) {
     		console.log('loaded PDF ' +  loadedCount);
     		pdfDocs.push(pdfDoc_);
     		loadedCount++;
-    		if (loadedCount !== urls.length) {
+    		if (loadedCount !== documentURLS.length) {
     			return load();
     		}
 
