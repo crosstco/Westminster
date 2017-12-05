@@ -16,7 +16,7 @@ var documentURLS = [];
   var pageNum = 1;
   var pageRendering = false;
   var pageNumPending = null;
-  var scale = 0.8;
+  var scale = 1.5;
   var canvas = null;
   var ctx = null;
 
@@ -47,7 +47,7 @@ Template.programDisplay.onRendered(function() {
     pageNum = 1;
     pageRendering = false;
     pageNumPending = null;
-    scale = 0.8;
+    scale = 1.5;
     canvas = document.getElementById('the-canvas');
     ctx = canvas.getContext('2d');
 
