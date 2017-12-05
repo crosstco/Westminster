@@ -27,12 +27,12 @@ acts.set([]);
 
 var bt = new ReactiveVar();
 bt.set([]);
-Template.programPage.onRendered(() => {
+//Template.programPage.onRendered(() => {
   Tracker.autorun(() => {
     if (this.data) data.set(this.data);    
   });
   
-});
+//});
 
 Template.programPage.helpers({
   owner() {
